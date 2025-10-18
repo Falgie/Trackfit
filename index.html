@@ -1085,7 +1085,7 @@
                 setTimerPreset(parseInt(e.target.dataset.seconds));
             }
         }
-        
+
         function handleExerciseSuggestionClicks(e) {
             if (e.target.classList.contains('exercise-suggestion') && e.target.dataset.exercise) {
                 addQuickExercise(e.target.dataset.exercise);
@@ -1120,7 +1120,7 @@
         function handleHistoryListClicks(e) {
             const target = e.target.closest('button');
             if (!target) return;
-            const workoutItem = target.closest('.exercise-item');
+            const workoutItem = target.closest('.exercise-item'); // Używamy tej samej klasy
             if (!workoutItem) return;
             const workoutId = parseInt(workoutItem.dataset.id);
 
@@ -1133,21 +1133,21 @@
             const removeBtn = e.target.closest('.btn-remove-exercise');
 
             if (setBox) {
-                e.stopPropagation();
+                e.stopPropagation(); // Zapobiegaj kliknięciu na input wewnątrz
                 toggleSet(parseInt(setBox.dataset.exIndex), parseInt(setBox.dataset.setIndex));
             } else if (removeBtn) {
                 const exerciseItem = removeBtn.closest('.exercise-item');
                 if(exerciseItem) {
                     const firstSetBox = exerciseItem.querySelector('.set-box');
-                    if(firstSetBox && firstSetBox.dataset.exIndex !== undefined) { // Sprawdzenie czy istnieje
-                       removeExerciseFromWorkout(parseInt(firstSetBox.dataset.exIndex));
+                    let exerciseIndex = -1;
+                    if(firstSetBox && firstSetBox.dataset.exIndex !== undefined) {
+                       exerciseIndex = parseInt(firstSetBox.dataset.exIndex);
                     } else {
-                        // Fallback - jeśli nie ma set-boxów (choć nie powinno się zdarzyć)
-                        // Spróbuj znaleźć indeks inaczej, np. po pozycji w DOM
+                        // Fallback, jeśli nie ma set-boxów
                         const items = Array.from(document.getElementById('workout-exercises').children);
-                        const index = items.indexOf(exerciseItem);
-                        if (index > -1) removeExerciseFromWorkout(index);
+                        exerciseIndex = items.indexOf(exerciseItem);
                     }
+                    if (exerciseIndex > -1) removeExerciseFromWorkout(exerciseIndex);
                 }
             }
         }
@@ -1463,7 +1463,7 @@
              currentWorkout = {
                  id: Date.now(),
                  date: new Date().toISOString(),
-                 planName: `Powtórka - ${lastWorkout.planName || 'Szybki trening'}`, // Dodano nazwę planu
+                 planName: `Powtórka - ${lastWorkout.planName || 'Szybki trening'}`,
                  exercises: JSON.parse(JSON.stringify(lastWorkout.exercises))
              };
              currentWorkout.exercises.forEach(exercise => {
