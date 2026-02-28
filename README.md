@@ -24,7 +24,6 @@
 * **Session Stats**: Tracks total workouts completed, total sets performed, and active training days.
 * **Detailed History**: Review every past session with specific data on weight, reps, and PRs achieved.
 
----
 
 ## 📱 How To Use
 
@@ -36,7 +35,6 @@ LiftLog is designed to be used as a native-like mobile app:
 * **Android**: Tap the three dots and select **"Install App"** or **"Add to Home Screen"**.
 3. **Launch**: Open LiftLog from your home screen for a full-screen, standalone experience.
 
----
 
 ## 🔒 Privacy & Data
 
@@ -44,11 +42,9 @@ LiftLog is designed to be used as a native-like mobile app:
 * **Local Storage**: All training data, history, and preferences are stored locally in your browser's cache.
 * **Zero Accounts**: No registration or login is required to use the application.
 
----
 
 ## 🚀 Roadmap
 
-* [ ] **Data Export**: Ability to download training history as a JSON/CSV file.
+* **Data Export**: Ability to download training history as a JSON/CSV file.
 
----
 
