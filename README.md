@@ -1,8 +1,8 @@
 
 
-#  LiftLog
+#  GymCut
 
-**LiftLog** is a minimalist, mobile-first workout tracking application designed for speed and clarity during training. Built as a Progressive Web App (PWA), it allows users to manage training plans, track sets in real-time, and monitor personal progress without the need for a complex backend.
+**GymCut** is a minimalist, mobile-first workout tracking application designed for speed and clarity during training. Built as a Progressive Web App (PWA), it allows users to manage training plans, track sets in real-time, and monitor personal progress without the need for a complex backend.
 
 ##  Key Features
 
@@ -27,7 +27,7 @@
 
 ## 📱 How To Use
 
-LiftLog is designed to be used as a native-like mobile app:
+GymCut is designed to be used as a native-like mobile app:
 
 1. **Open in Browser**: Navigate to our URL on a mobile device (iOS Safari or Android Chrome).
 2. **Add to Home Screen**:
@@ -38,7 +38,7 @@ LiftLog is designed to be used as a native-like mobile app:
 
 ## 🔒 Privacy & Data
 
-* **No Cloud**: LiftLog does not send your data to any external servers.
+* **No Cloud**: GymCut does not send your data to any external servers.
 * **Local Storage**: All training data, history, and preferences are stored locally in your browser's cache.
 * **Zero Accounts**: No registration or login is required to use the application.
 
