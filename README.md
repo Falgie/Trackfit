@@ -1,50 +1,43 @@
+# GymCut
 
+**GymCut** to minimalistyczna aplikacja do śledzenia treningów, stworzona z myślą o urządzeniach mobilnych, szybkości działania i przejrzystości podczas ćwiczeń. Jako Progressive Web App (PWA), pozwala zarządzać planami treningowymi, zapisywać serie w czasie rzeczywistym i monitorować postępy bez potrzeby korzystania ze skomplikowanego zaplecza serwerowego.
 
-#  GymCut
+## Kluczowe funkcje
 
-**GymCut** is a minimalist, mobile-first workout tracking application designed for speed and clarity during training. Built as a Progressive Web App (PWA), it allows users to manage training plans, track sets in real-time, and monitor personal progress without the need for a complex backend.
+### Zarządzanie treningiem
 
-##  Key Features
+* **Szablony planów**: Szybkie generowanie planów na podstawie wbudowanych wzorców, takich jak PUSH, PULL, LEGS czy FULL BODY.
+* **Własny edytor**: Tworzenie i edycja list ćwiczeń, w tym serii, docelowych powtórzeń i konkretnych notatek.
+* **Szybki trening**: Możliwość rozpoczęcia sesji „z marszu” poprzez ręczne dodawanie ćwiczeń bez zdefiniowanego wcześniej planu.
 
-###  Training Management
+### Tryb Skupienia (Focus Mode)
 
-* **Plan Templates**: Quickly generate plans using built-in templates like PUSH, PULL, LEGS, and FULL BODY.
-* **Custom Editor**: Create and edit exercise lists, including sets, target repetitions, and specific notes.
-* **Quick Workouts**: Start a session on the fly by adding exercises manually without a predefined plan.
+* **Zoptymalizowany interfejs**: Specjalny widok zaprojektowany pod kątem siłowni, wyposażony w duże przyciski i wygodne przełączniki (steppery) dla łatwego wprowadzania danych na telefonie.
+* **Śledzenie PR w czasie rzeczywistym**: Automatyczne wykrywanie i wyróżnianie rekordów życiowych (PR) pod kątem ciężaru i powtórzeń podczas trwania serii.
+* **Zintegrowany timer**: Wbudowany licznik czasu przerwy z gotowymi ustawieniami (30s, 1m, 3m itp.) i powiadomieniami dźwiękowymi.
 
-###  Focus Mode
+### Analityka i Historia
 
-* **Optimized Interface**: A specialized view designed for the gym, featuring large buttons and steppers for easy logging with mobile devices.
-* **Real-time PR Tracking**: Automatically detects and highlights Personal Records (PRs) for weight and repetitions during a set.
-* **Integrated Timer**: Built-in rest timer with presets (30s, 1m, 3m, etc.) and sound notifications to keep workouts on track.
+* **Kalendarz treningowy**: Wizualna prezentacja systematyczności treningów w skali miesiąca.
+* **Statystyki sesji**: Śledzenie całkowitej liczby ukończonych treningów, wykonanych serii oraz aktywnych dni treningowych.
+* **Szczegółowa historia**: Przegląd każdej poprzedniej sesji z dokładnymi danymi o ciężarach, powtórzeniach i zdobytych rekordach.
 
-### Analytics & History
+## 📱 Jak używać
 
-* **Workout Calendar**: A visual representation of training consistency over the month.
-* **Session Stats**: Tracks total workouts completed, total sets performed, and active training days.
-* **Detailed History**: Review every past session with specific data on weight, reps, and PRs achieved.
+GymCut została zaprojektowana do użytku jako natywna aplikacja mobilna:
 
+1. **Otwórz w przeglądarce**: Wejdź pod adres URL aplikacji na urządzeniu mobilnym (Safari na iOS lub Chrome na Androidzie).
+2. **Dodaj do ekranu głównego**:
+    * **iOS**: Stuknij ikonę „Udostępnij” i wybierz **„Dodaj do ekranu początkowego”**.
+    * **Android**: Stuknij ikonę trzech kropek i wybierz **„Zainstaluj aplikację”** lub **„Dodaj do ekranu głównego”**.
+3. **Uruchom**: Otwórz GymCut z ekranu głównego, aby korzystać z aplikacji w trybie pełnoekranowym.
 
-## 📱 How To Use
+## 🔒 Prywatność i Dane
 
-GymCut is designed to be used as a native-like mobile app:
+* **Brak chmury**: GymCut nie wysyła Twoich danych na żadne zewnętrzne serwery.
+* **Lokalne przechowywanie**: Wszystkie dane treningowe, historia i preferencje są zapisywane lokalnie w pamięci podręcznej Twojej przeglądarki.
+* **Zero kont**: Korzystanie z aplikacji nie wymaga rejestracji ani logowania.
 
-1. **Open in Browser**: Navigate to our URL on a mobile device (iOS Safari or Android Chrome).
-2. **Add to Home Screen**:
-* **iOS**: Tap the "Share" icon and select **"Add to Home Screen"**.
-* **Android**: Tap the three dots and select **"Install App"** or **"Add to Home Screen"**.
-3. **Launch**: Open LiftLog from your home screen for a full-screen, standalone experience.
+## 🚀 Roadmapa
 
-
-## 🔒 Privacy & Data
-
-* **No Cloud**: GymCut does not send your data to any external servers.
-* **Local Storage**: All training data, history, and preferences are stored locally in your browser's cache.
-* **Zero Accounts**: No registration or login is required to use the application.
-
-
-## 🚀 Roadmap
-
-* **Data Export**: Ability to download training history as a JSON/CSV file.
-
-
+* **Eksport danych**: Możliwość pobrania historii treningowej jako plik JSON/CSV.
