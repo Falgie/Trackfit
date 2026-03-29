@@ -1,0 +1,17 @@
+{
+  "name": "GymCut",
+  "short_name": "GymCut",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
+  "icons": [
+    {
+      "src": "app-icon-mobile.png",
+      "sizes": "184x184",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
