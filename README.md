@@ -1,43 +1,51 @@
-# GymCut
+# GymCut 
 
-**GymCut** to minimalistyczna aplikacja do śledzenia treningów, stworzona z myślą o urządzeniach mobilnych, szybkości działania i przejrzystości podczas ćwiczeń. Jako Progressive Web App (PWA), pozwala zarządzać planami treningowymi, zapisywać serie w czasie rzeczywistym i monitorować postępy bez potrzeby korzystania ze skomplikowanego zaplecza serwerowego.
+**Twój trening, Twój rytm.** **GymCut** to minimalistyczna, w 100% darmowa aplikacja do śledzenia treningów , stworzona dla bywalców siłowni, którzy cenią szybkość działania i brak rozpraszaczy. Zaprojektowana jako nowoczesna alternatywa dla aplikacji  – pozbawiona zbędnych funkcji społecznościowych, a skupiona na intuicyjnym interfejsie i ułatwianiu progresywnego przeładowania.
 
-## Kluczowe funkcje
+## 🌟 Kluczowe funkcje
 
-### Zarządzanie treningiem
+### 🔥 Inteligentna Progresja (Smart Target)
+Nie musisz pamiętać, kiedy dołożyć ciężaru. Jeśli ćwiczenie poszło gładko, oznacz je jednym kliknięciem ("Flaga Progresji"). Na kolejnym treningu GymCut przypomni Ci o zwiększeniu obciążenia, działając jak Twój osobisty asystent treningowy.
 
-* **Szablony planów**: Szybkie generowanie planów na podstawie wbudowanych wzorców, takich jak PUSH, PULL, LEGS czy FULL BODY.
-* **Własny edytor**: Tworzenie i edycja list ćwiczeń, w tym serii, docelowych powtórzeń i konkretnych notatek.
-* **Szybki trening**: Możliwość rozpoczęcia sesji „z marszu” poprzez ręczne dodawanie ćwiczeń bez zdefiniowanego wcześniej planu.
+### 👻 Kontekst Historyczny (Ghost Data)
+Podczas wpisywania aktualnej serii, aplikacja wyświetla w tle Twoje dokładne wyniki z poprzedniego treningu dla tego samego ćwiczenia. Zawsze wiesz, od jakiego ciężaru zacząć.
 
-### Tryb Skupienia (Focus Mode)
+### 📦 Bezbolesna Migracja (Import Danych)
+Przechodzisz z innej aplikacji? Żaden problem. GymCut pozwala na błyskawiczny import historii treningów z innych popularnych trackerów. Nie tracisz swoich wieloletnich danych i wypracowanych rekordów.
 
-* **Zoptymalizowany interfejs**: Specjalny widok zaprojektowany pod kątem siłowni, wyposażony w duże przyciski i wygodne przełączniki (steppery) dla łatwego wprowadzania danych na telefonie.
-* **Śledzenie PR w czasie rzeczywistym**: Automatyczne wykrywanie i wyróżnianie rekordów życiowych (PR) pod kątem ciężaru i powtórzeń podczas trwania serii.
-* **Zintegrowany timer**: Wbudowany licznik czasu przerwy z gotowymi ustawieniami (30s, 1m, 3m itp.) i powiadomieniami dźwiękowymi.
+### 🎯 Tryb Skupienia (Focus Mode)
+* **Zoptymalizowany interfejs:** Ciemny motyw (Dark Mode), kafelkowy układ i duże pola wprowadzania, zoptymalizowane pod obsługę jedną ręką na siłowni.
+* **Śledzenie PR:** Automatyczne wykrywanie i wyróżnianie rekordów życiowych (Personal Records) w czasie rzeczywistym.
+* **Zintegrowany Timer:** Wbudowany stoper odpoczynku umieszczony centralnie na dole ekranu, pozwalający precyzyjnie kontrolować przerwy między seriami.
 
-### Analityka i Historia
+### 📊 Analityka i Plany
+* **Szybki start:** Gotowe wbudowane szablony (PUSH, PULL, LEGS) oraz możliwość budowania własnych rutyn treningowych.
+* **Statystyki:** Śledzenie aktywności miesiąc po miesiącu, zliczanie wykonanych treningów i najczęściej wybieranych splitów.
+* **Personalizacja:** Możliwość dostosowania motywów do własnych preferencji.
 
-* **Kalendarz treningowy**: Wizualna prezentacja systematyczności treningów w skali miesiąca.
-* **Statystyki sesji**: Śledzenie całkowitej liczby ukończonych treningów, wykonanych serii oraz aktywnych dni treningowych.
-* **Szczegółowa historia**: Przegląd każdej poprzedniej sesji z dokładnymi danymi o ciężarach, powtórzeniach i zdobytych rekordach.
+---
 
-## 📱 Jak używać
+## 📱 Jak zainstalować
 
-GymCut została zaprojektowana do użytku jako natywna aplikacja mobilna:
+GymCut to aplikacja typu Progressive Web App. Działa błyskawicznie bez potrzeby pobierania ze sklepów App Store czy Google Play.
 
-1. **Otwórz w przeglądarce**: Wejdź pod adres URL aplikacji na urządzeniu mobilnym (Safari na iOS lub Chrome na Androidzie).
+1. **Otwórz w przeglądarce**: Wejdź pod adres URL aplikacji na swoim smartfonie (Safari na iOS lub Chrome na Androidzie).
 2. **Dodaj do ekranu głównego**:
-    * **iOS**: Stuknij ikonę „Udostępnij” i wybierz **„Dodaj do ekranu początkowego”**.
-    * **Android**: Stuknij ikonę trzech kropek i wybierz **„Zainstaluj aplikację”** lub **„Dodaj do ekranu głównego”**.
-3. **Uruchom**: Otwórz GymCut z ekranu głównego, aby korzystać z aplikacji w trybie pełnoekranowym.
+   * **🍎 iOS**: Stuknij ikonę „Udostępnij” na dolnym pasku i wybierz **„Dodaj do ekranu początkowego”**.
+   * **🤖 Android**: Stuknij ikonę trzech kropek w prawym górnym rogu i wybierz **„Zainstaluj aplikację”** lub **„Dodaj do ekranu głównego”**.
+3. **Gotowe!** Uruchom GymCut z ekranu głównego, aby korzystać z aplikacji.
 
-## 🔒 Prywatność i Dane
+---
 
-* **Brak chmury**: GymCut nie wysyła Twoich danych na żadne zewnętrzne serwery.
-* **Lokalne przechowywanie**: Wszystkie dane treningowe, historia i preferencje są zapisywane lokalnie w pamięci podręcznej Twojej przeglądarki.
-* **Zero kont**: Korzystanie z aplikacji nie wymaga rejestracji ani logowania.
+## 🔒 Prywatność i Bezpieczeństwo (Offline-First)
 
-## 🚀 Roadmapa
+* **Brak serwerów:** GymCut nie wysyła Twoich danych treningowych do chmury. 
+* **Lokalna pamięć:** Wszystkie Twoje plany, historia i statystyki są bezpiecznie przechowywane lokalnie w pamięci Twojej przeglądarki (Local Storage).
+* **Zero rejestracji:** Aplikacja szanuje Twój czas. Nie wymaga zakładania konta, podawania maila ani logowania. Wchodzisz i ćwiczysz.
 
-* **Eksport danych**: Możliwość pobrania historii treningowej jako plik JSON/CSV.
+---
+
+## 🚀 Roadmapa (Plany na przyszłość)
+
+Aplikacja jest stale rozwijana. W najbliższych planach znajdują się m.in.:
+* **Zaawansowane typy serii:** Możliwość oznaczania serii jako rozgrzewkowej (Warm-up) lub Drop Set.
