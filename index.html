@@ -2046,6 +2046,7 @@
             gap: 15px;
         }
 
+
         /* Karta Serii (Focus Mode) */
         .focus-set-box {
             background: var(--card-bg);
@@ -4686,6 +4687,7 @@
                 focusAddBtn.addEventListener('click', showFocusAddExerciseModal);
             }
 
+
             // Modal
             document.getElementById('modal-close-btn').addEventListener('click', hideModal);
             document.getElementById('modal-backdrop').addEventListener('click', hideModal);
@@ -5156,7 +5158,12 @@
             if (!currentPlanId) { showToast('Najpierw wybierz plan!', 'warning'); return; }
             const name = document.getElementById('exercise-name').value.trim(); if (!name) { showToast('Podaj nazwę ćwiczenia!', 'warning'); return; }
             const plan = trainingPlans.find(p => p.id === currentPlanId); if (!plan) return;
-            const newExerciseData = { name, sets: parseInt(document.getElementById('exercise-sets').value) || 3, reps: parseInt(document.getElementById('exercise-reps').value) || 10, notes: document.getElementById('exercise-notes').value.trim() };
+            const newExerciseData = {
+                name,
+                sets: parseInt(document.getElementById('exercise-sets').value) || 3,
+                reps: parseInt(document.getElementById('exercise-reps').value) || 10,
+                notes: document.getElementById('exercise-notes').value.trim()
+            };
             const exerciseList = document.getElementById('exercise-list');
 
             const emptyState = exerciseList.querySelector('.empty-state');
@@ -5655,6 +5662,7 @@
             if (currentType === 'failure') return 'normal';
             return 'warmup';
         }
+
 
         function renderWorkoutEditorModal() {
             if (!workoutEditorState || !workoutEditorState.draft) return;
@@ -7282,7 +7290,7 @@
                         html += `<div style="margin-top: 6px; color: var(--text-color);">`;
                         html += `<i class="fas fa-redo" style="color: var(--success);"></i> Maksymalne powtórzenia: <strong>${pr.maxReps}</strong>`;
                         if (pr.maxRepsWeight !== null) {
-                            html += ` @ ${pr.maxRepsWeight} kg`;
+                            html += ` x ${pr.maxRepsWeight} kg`;
                         }
                         html += '</div>';
                     }
@@ -7322,7 +7330,7 @@
                         html += `<div style="margin-top: 6px; color: var(--text-color);">`;
                         html += `<i class="fas fa-redo" style="color: var(--success);"></i> Najwięcej powtórzeń: <strong>${best.maxReps}</strong>`;
                         if (best.maxRepsWeight !== null) {
-                            html += ` @ ${best.maxRepsWeight} kg`;
+                            html += ` x ${best.maxRepsWeight} kg`;
                         }
                         html += '</div>';
                     }
