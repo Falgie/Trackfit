@@ -902,6 +902,13 @@
             touch-action: manipulation;
         }
 
+        .theme-import-hint {
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+
         body.plan-sheet-open {
             overflow: hidden;
         }
@@ -1366,11 +1373,11 @@
             transform: rotate(0deg);
         }
 
-        /* Workout editor (mobile-friendly) */
+        /* Workout editor (mobile cards) */
         #workout-editor-root input[type="text"],
         #workout-editor-root input[type="number"] {
             width: 100%;
-            min-height: 46px;
+            min-height: 48px;
             font-size: 1rem;
         }
 
@@ -1380,20 +1387,25 @@
 
         .workout-editor-topbar {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: stretch;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        .workout-editor-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 14px;
+        .workout-editor-helper {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.4;
         }
 
         .workout-editor-exercise-card {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            padding: 12px;
         }
 
         .workout-editor-exercise-header {
@@ -1403,11 +1415,18 @@
             margin-bottom: 10px;
         }
 
+        .workout-editor-ex-name {
+            flex: 1;
+        }
+
         .workout-editor-set-actions {
             display: flex;
             gap: 8px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .workout-editor-set-actions button {
+            flex: 1;
         }
 
         .workout-editor-sets {
@@ -1416,26 +1435,151 @@
             gap: 10px;
         }
 
-        .workout-editor-set-row {
-            display: grid;
-            grid-template-columns: 78px 1fr 1fr;
+        .workout-editor-set-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            background: var(--bg-color);
+        }
+
+        .workout-editor-set-card.is-completed {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .workout-editor-set-card.is-warmup {
+            border-color: rgba(245, 158, 11, 0.45);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .workout-editor-set-card.is-drop-set {
+            border-color: rgba(96, 165, 250, 0.5);
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .workout-editor-set-card.is-failure {
+            border-color: rgba(244, 114, 182, 0.5);
+            background: rgba(244, 114, 182, 0.1);
+        }
+
+        .workout-editor-set-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
             gap: 8px;
+        }
+
+        .workout-editor-set-index {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .workout-editor-set-index.type-toggle {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+
+        .workout-editor-set-index.type-toggle:hover {
+            color: var(--accent-color);
+        }
+
+        .workout-editor-set-card.is-warmup .workout-editor-set-index {
+            color: #b45309;
+        }
+
+        [data-theme="dark"] .workout-editor-set-card.is-warmup .workout-editor-set-index {
+            color: #fbbf24;
+        }
+
+        .workout-editor-set-card.is-drop-set .workout-editor-set-index {
+            color: #2563eb;
+        }
+
+        [data-theme="dark"] .workout-editor-set-card.is-drop-set .workout-editor-set-index {
+            color: #93c5fd;
+        }
+
+        .workout-editor-set-card.is-failure .workout-editor-set-index {
+            color: #db2777;
+        }
+
+        [data-theme="dark"] .workout-editor-set-card.is-failure .workout-editor-set-index {
+            color: #f9a8d4;
+        }
+
+        .workout-editor-complete-btn {
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0;
+            width: auto;
+        }
+
+        .workout-editor-complete-btn.is-active {
+            color: #10B981;
+            border-color: rgba(16, 185, 129, 0.6);
+            background: rgba(16, 185, 129, 0.14);
+        }
+
+        .workout-editor-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .workout-editor-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .workout-editor-metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .workout-editor-stepper {
+            display: grid;
+            grid-template-columns: 44px 1fr 44px;
+            gap: 6px;
             align-items: center;
         }
 
+        .workout-editor-stepper button {
+            min-height: 48px;
+            margin: 0;
+            padding: 0;
+            font-size: 1.2rem;
+            border-radius: 10px;
+        }
+
+        .workout-editor-stepper input {
+            text-align: center;
+            margin: 0;
+            font-weight: 700;
+        }
+
         @media (max-width: 480px) {
-            .workout-editor-topbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .workout-editor-actions {
-                flex-direction: column;
-            }
             .workout-editor-exercise-header {
-                flex-direction: column;
-                align-items: stretch;
+                flex-wrap: wrap;
             }
-            .workout-editor-set-row {
+
+            .workout-editor-ex-name {
+                flex-basis: 100%;
+            }
+
+            .workout-editor-metrics {
                 grid-template-columns: 1fr;
             }
         }
@@ -1451,7 +1595,7 @@
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             flex: 1 1 auto;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .history-edit-sheet-footer {
@@ -1460,6 +1604,8 @@
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
             flex-shrink: 0;
+            position: sticky;
+            bottom: 0;
             padding-bottom: max(12px, env(safe-area-inset-bottom));
             background: var(--card-bg);
         }
@@ -1467,6 +1613,8 @@
         .history-edit-sheet-footer button {
             flex: 1;
             margin: 0;
+            min-height: 50px;
+            font-weight: 700;
         }
 
         .summary-item {
@@ -1918,6 +2066,36 @@
             box-shadow: 0 0 15px -5px var(--success);
         }
 
+        .focus-set-box.is-warmup {
+            border-left: 5px solid #f59e0b;
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(245, 158, 11, 0.1) 100%);
+        }
+
+        .focus-set-box.is-drop-set {
+            border-left: 5px solid #3b82f6;
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.1) 100%);
+        }
+
+        .focus-set-box.is-failure {
+            border-left: 5px solid #ec4899;
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(236, 72, 153, 0.1) 100%);
+        }
+
+        [data-theme="dark"] .focus-set-box.is-warmup {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(245, 158, 11, 0.14) 100%);
+            border-left-color: #fbbf24;
+        }
+
+        [data-theme="dark"] .focus-set-box.is-drop-set {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.14) 100%);
+            border-left-color: #93c5fd;
+        }
+
+        [data-theme="dark"] .focus-set-box.is-failure {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(236, 72, 153, 0.14) 100%);
+            border-left-color: #f9a8d4;
+        }
+
         [data-theme="dark"] .focus-set-box.completed {
             background: var(--card-bg);
             border-left-color: var(--success);
@@ -1982,6 +2160,36 @@
         .focus-set-header span {
             font-size: 1.2rem;
             font-weight: 600;
+        }
+
+        .focus-set-label.type-toggle {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+
+        .focus-set-box.is-warmup .focus-set-label {
+            color: #b45309;
+        }
+
+        [data-theme="dark"] .focus-set-box.is-warmup .focus-set-label {
+            color: #fbbf24;
+        }
+
+        .focus-set-box.is-drop-set .focus-set-label {
+            color: #2563eb;
+        }
+
+        [data-theme="dark"] .focus-set-box.is-drop-set .focus-set-label {
+            color: #93c5fd;
+        }
+
+        .focus-set-box.is-failure .focus-set-label {
+            color: #db2777;
+        }
+
+        [data-theme="dark"] .focus-set-box.is-failure .focus-set-label {
+            color: #f9a8d4;
         }
 
         /* --- FIX: STEPPERY I PRZYCISKI W TRYBIE SKUPIENIA (SZTYWNE DLA IOS) --- */
@@ -3345,6 +3553,11 @@
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-toggle">
                 <i class="fas fa-adjust" aria-hidden="true"></i> Zmień motyw
             </button>
+            <button type="button" class="plan-actions-sheet-item" id="theme-sheet-import-strong-hevy">
+                <i class="fas fa-file-import" aria-hidden="true"></i> Importowanie danych
+            </button>
+            <p class="theme-import-hint">Obsługiwane pliki: eksport `.json` oraz `.csv` z aplikacji treningowych.</p>
+            <input type="file" id="strong-hevy-import-input" accept=".json,.csv,application/json,text/csv" hidden>
             <button type="button" class="plan-actions-sheet-cancel" id="theme-sheet-cancel">Anuluj</button>
         </div>
     </div>
@@ -3796,8 +4009,207 @@
                 if (t.id === 'theme-sheet-toggle') {
                     toggleTheme();
                     closeThemeSettingsSheet();
+                    return;
+                }
+                if (t.id === 'theme-sheet-import-strong-hevy') {
+                    triggerStrongHevyImport();
                 }
             });
+        }
+
+        function triggerStrongHevyImport() {
+            const input = document.getElementById('strong-hevy-import-input');
+            if (!input) return;
+            input.value = '';
+            input.click();
+        }
+
+        function normalizeImportedWorkoutExercise(exercise, fallbackName = 'Ćwiczenie') {
+            const name = String(
+                exercise?.name ||
+                exercise?.title ||
+                exercise?.exercise_name ||
+                fallbackName
+            ).trim() || fallbackName;
+
+            let setsRaw = [];
+            if (Array.isArray(exercise?.sets)) setsRaw = exercise.sets;
+            else if (Array.isArray(exercise?.entries)) setsRaw = exercise.entries;
+            else if (Array.isArray(exercise?.logs)) setsRaw = exercise.logs;
+
+            if (setsRaw.length === 0) {
+                const repsVal = exercise?.reps || exercise?.targetReps || exercise?.repetitions || 10;
+                return {
+                    name,
+                    sets: 1,
+                    reps: parseInt(repsVal, 10) || 10,
+                    completedSets: [true],
+                    weights: [exercise?.weight_kg ?? exercise?.weight ?? ''],
+                    repsCompleted: [parseInt(repsVal, 10) || '']
+                };
+            }
+
+            const completedSets = [];
+            const weights = [];
+            const repsCompleted = [];
+            setsRaw.forEach((setItem) => {
+                const weight = setItem?.weight_kg ?? setItem?.weight ?? setItem?.kg ?? '';
+                const reps = parseInt(setItem?.reps ?? setItem?.repetitions ?? setItem?.rep_count, 10);
+                const completed = setItem?.completed === false ? false : true;
+                completedSets.push(completed);
+                weights.push(weight === null || weight === undefined ? '' : String(weight));
+                repsCompleted.push(Number.isFinite(reps) && reps > 0 ? reps : '');
+            });
+
+            return {
+                name,
+                sets: setsRaw.length,
+                reps: repsCompleted.find((r) => Number.isFinite(r) && r > 0) || 10,
+                completedSets,
+                weights,
+                repsCompleted
+            };
+        }
+
+        function parseStrongHevyJsonPayload(payload) {
+            let workoutsRaw = [];
+            if (Array.isArray(payload)) workoutsRaw = payload;
+            else if (Array.isArray(payload?.workouts)) workoutsRaw = payload.workouts;
+            else if (Array.isArray(payload?.data?.workouts)) workoutsRaw = payload.data.workouts;
+
+            const normalized = [];
+            workoutsRaw.forEach((workout) => {
+                const exercisesRaw = Array.isArray(workout?.exercises)
+                    ? workout.exercises
+                    : (Array.isArray(workout?.exercise_list) ? workout.exercise_list : []);
+                if (!exercisesRaw.length) return;
+
+                const exercises = exercisesRaw
+                    .map((ex) => normalizeImportedWorkoutExercise(ex))
+                    .filter((ex) => ex && ex.name);
+                if (!exercises.length) return;
+
+                normalized.push({
+                    id: crypto.randomUUID(),
+                    date: workout?.date || workout?.started_at || workout?.start_time || new Date().toISOString(),
+                    planName: String(workout?.name || workout?.title || 'Import Strong/Hevy'),
+                    exercises
+                });
+            });
+            return normalized;
+        }
+
+        function parseCsvLine(line) {
+            const out = [];
+            const regex = /("([^"]|"")*"|[^,]*)(,|$)/g;
+            let match;
+            while ((match = regex.exec(line)) !== null) {
+                let cell = match[1] || '';
+                if (cell.startsWith('"') && cell.endsWith('"')) {
+                    cell = cell.slice(1, -1).replace(/""/g, '"');
+                }
+                out.push(cell.trim());
+                if (match[3] === '') break;
+            }
+            return out;
+        }
+
+        function parseStrongHevyCsvPayload(text) {
+            const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+            if (lines.length < 2) return [];
+
+            const headers = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
+            const idxDate = headers.findIndex((h) => h.includes('date'));
+            const idxWorkout = headers.findIndex((h) => h.includes('workout'));
+            const idxExercise = headers.findIndex((h) => h.includes('exercise'));
+            const idxWeight = headers.findIndex((h) => h.includes('weight') || h.includes('kg'));
+            const idxReps = headers.findIndex((h) => h.includes('reps') || h.includes('rep'));
+
+            if (idxDate < 0 || idxExercise < 0) return [];
+
+            const grouped = new Map();
+            for (let i = 1; i < lines.length; i++) {
+                const cols = parseCsvLine(lines[i]);
+                const date = cols[idxDate] || new Date().toISOString();
+                const workoutName = idxWorkout >= 0 ? (cols[idxWorkout] || 'Import Strong/Hevy') : 'Import Strong/Hevy';
+                const exerciseName = cols[idxExercise];
+                if (!exerciseName) continue;
+                const key = `${date}::${workoutName}`;
+                if (!grouped.has(key)) grouped.set(key, { date, planName: workoutName, exercises: new Map() });
+                const bucket = grouped.get(key);
+                if (!bucket.exercises.has(exerciseName)) {
+                    bucket.exercises.set(exerciseName, {
+                        name: exerciseName,
+                        sets: 0,
+                        reps: 10,
+                        completedSets: [],
+                        weights: [],
+                        repsCompleted: []
+                    });
+                }
+                const ex = bucket.exercises.get(exerciseName);
+                const reps = idxReps >= 0 ? parseInt(cols[idxReps], 10) : NaN;
+                const weight = idxWeight >= 0 ? cols[idxWeight] : '';
+                ex.sets += 1;
+                ex.completedSets.push(true);
+                ex.weights.push(weight || '');
+                ex.repsCompleted.push(Number.isFinite(reps) && reps > 0 ? reps : '');
+                if (Number.isFinite(reps) && reps > 0) ex.reps = reps;
+            }
+
+            return Array.from(grouped.values()).map((w) => ({
+                id: crypto.randomUUID(),
+                date: w.date,
+                planName: w.planName,
+                exercises: Array.from(w.exercises.values())
+            }));
+        }
+
+        function mergeImportedWorkouts(importedWorkouts) {
+            if (!Array.isArray(importedWorkouts) || importedWorkouts.length === 0) return 0;
+            if (!Array.isArray(workoutHistory)) workoutHistory = [];
+            const valid = importedWorkouts.filter((w) => w && Array.isArray(w.exercises) && w.exercises.length > 0);
+            if (!valid.length) return 0;
+            workoutHistory = workoutHistory.concat(valid);
+            saveWorkoutHistory();
+            renderWorkoutHistory();
+            updateStats();
+            updateStreakUI();
+            return valid.length;
+        }
+
+        async function handleStrongHevyImportFile(event) {
+            const file = event.target?.files?.[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                let imported = [];
+                const lowerName = file.name.toLowerCase();
+
+                if (lowerName.endsWith('.json')) {
+                    const payload = JSON.parse(text);
+                    imported = parseStrongHevyJsonPayload(payload);
+                } else if (lowerName.endsWith('.csv')) {
+                    imported = parseStrongHevyCsvPayload(text);
+                } else {
+                    showToast('Nieobsługiwany format pliku. Użyj .json lub .csv.', 'warning');
+                    return;
+                }
+
+                const mergedCount = mergeImportedWorkouts(imported);
+                if (mergedCount > 0) {
+                    closeThemeSettingsSheet();
+                    showToast(`Zaimportowano ${mergedCount} treningów z pliku.`, 'success', 4500);
+                } else {
+                    showToast('Nie znaleziono treningów do importu w tym pliku.', 'warning');
+                }
+            } catch (error) {
+                console.error('Import Strong/Hevy failed:', error);
+                showToast('Nie udało się zaimportować danych. Sprawdź format pliku.', 'warning', 4500);
+            } finally {
+                const input = document.getElementById('strong-hevy-import-input');
+                if (input) input.value = '';
+            }
         }
 
         function hideModal() {
@@ -4120,6 +4532,7 @@
         let tabSwitchTimeout = null;
         let expandedHistoryWorkoutIds = new Set();
         let workoutEditorState = null;
+        let progressionArmedExerciseIndexes = new Set();
 
         // Zmienne dla Swipe
         const tabOrder = ['training-plans', 'history', 'stats'];
@@ -4196,6 +4609,10 @@
                 e.stopPropagation();
                 openThemeSettingsSheet();
             });
+            const strongHevyImportInput = document.getElementById('strong-hevy-import-input');
+            if (strongHevyImportInput) {
+                strongHevyImportInput.addEventListener('change', handleStrongHevyImportFile);
+            }
             document.getElementById('pr-button').addEventListener('click', showPRModal);
 
             // Edytor Planu (na osobnej stronie)
@@ -4827,6 +5244,7 @@
         function startQuickWorkout() {
             showTab('training-plans');
             currentWorkout = { id: crypto.randomUUID(), date: new Date().toISOString(), exercises: [] };
+            progressionArmedExerciseIndexes.clear();
             saveCurrentWorkout();
             openQuickWorkoutSheet();
         }
@@ -4837,13 +5255,14 @@
             const allCard = document.querySelector('.template-card[data-template="all"]');
             if (allCard) allCard.classList.add('active');
             currentWorkout = { id: crypto.randomUUID(), date: new Date().toISOString(), planName: plan.name, planId: plan.id, exercises: JSON.parse(JSON.stringify(plan.exercises)) };
-            currentWorkout.exercises.forEach((exercise, idx) => { if (exercise && typeof exercise === 'object') { exercise.sets = exercise.sets || 3; exercise.completedSets = Array(exercise.sets).fill(false); exercise.weights = Array(exercise.sets).fill(''); exercise.repsCompleted = Array(exercise.sets).fill(''); exercise.progression = !!plan.exercises[idx].progression; exercise.planExerciseIndex = idx; } });
+            progressionArmedExerciseIndexes.clear();
+            currentWorkout.exercises.forEach((exercise, idx) => { if (exercise && typeof exercise === 'object') { exercise.sets = exercise.sets || 3; exercise.completedSets = Array(exercise.sets).fill(false); exercise.weights = Array(exercise.sets).fill(''); exercise.repsCompleted = Array(exercise.sets).fill(''); exercise.setTypes = Array(exercise.sets).fill('normal'); exercise.progression = !!plan.exercises[idx].progression; exercise.planExerciseIndex = idx; } });
             saveCurrentWorkout(); showTab('training-plans'); enterFocusMode();
         }
         function addQuickWorkoutExercise() {
             const exerciseName = document.getElementById('quick-exercise-name').value.trim(); if (!exerciseName) { showToast('Podaj nazwę ćwiczenia!', 'warning'); return; }
             if (!currentWorkout || !Array.isArray(currentWorkout.exercises)) { currentWorkout = { id: crypto.randomUUID(), date: new Date().toISOString(), exercises: [] }; }
-            currentWorkout.exercises.push({ name: exerciseName, sets: 3, reps: 10, completedSets: [false, false, false], weights: ['', '', ''], repsCompleted: ['', '', ''] });
+            currentWorkout.exercises.push({ name: exerciseName, sets: 3, reps: 10, completedSets: [false, false, false], weights: ['', '', ''], repsCompleted: ['', '', ''], setTypes: ['normal', 'normal', 'normal'] });
             saveCurrentWorkout(); document.getElementById('quick-exercise-name').value = '';
             closeQuickWorkoutSheet({});
             resetTemplatePillsToAll();
@@ -4887,6 +5306,7 @@
             const savedWorkoutForShare = JSON.parse(JSON.stringify(currentWorkout));
             workoutHistory.push(currentWorkout); saveWorkoutHistory();
             currentWorkout = { exercises: [] }; saveCurrentWorkout();
+            progressionArmedExerciseIndexes.clear();
             exitFocusMode();
             closeQuickWorkoutSheet({});
             resetTemplatePillsToAll();
@@ -5175,8 +5595,8 @@
             body.innerHTML = `
                 <div id="workout-editor-root">
                     <div class="workout-editor-topbar">
-                        <p style="margin:0; color:var(--text-muted); font-size:0.9rem;">Edytuj ćwiczenia, serie i wyniki treningu.</p>
-                        <button type="button" id="workout-edit-add-exercise" class="btn-success" style="width:auto; padding:8px 12px;"><i class="fas fa-plus"></i> Ćwiczenie</button>
+                        <p class="workout-editor-helper">Edytuj ćwiczenia i serie w wygodnym układzie mobilnym. Użyj przycisków +/- aby szybciej zmieniać wartości.</p>
+                        <button type="button" id="workout-edit-add-exercise" class="btn-success"><i class="fas fa-plus"></i> Dodaj ćwiczenie</button>
                     </div>
                     <div id="workout-editor-list"></div>
                 </div>
@@ -5196,14 +5616,44 @@
             normalized.completedSets = Array.isArray(normalized.completedSets) ? normalized.completedSets.slice(0, sets) : [];
             normalized.weights = Array.isArray(normalized.weights) ? normalized.weights.slice(0, sets) : [];
             normalized.repsCompleted = Array.isArray(normalized.repsCompleted) ? normalized.repsCompleted.slice(0, sets) : [];
+            normalized.setTypes = Array.isArray(normalized.setTypes) ? normalized.setTypes.slice(0, sets) : [];
+            if (!Array.isArray(normalized.setTypes) || normalized.setTypes.length === 0) {
+                const warmupLegacy = Array.isArray(normalized.warmupSets) ? normalized.warmupSets.slice(0, sets) : [];
+                normalized.setTypes = [];
+                for (let i = 0; i < sets; i++) {
+                    normalized.setTypes.push(warmupLegacy[i] ? 'warmup' : 'normal');
+                }
+            }
             normalized.prFlags = Array.isArray(normalized.prFlags) ? normalized.prFlags.slice(0, sets) : [];
 
             while (normalized.completedSets.length < sets) normalized.completedSets.push(false);
             while (normalized.weights.length < sets) normalized.weights.push('');
             while (normalized.repsCompleted.length < sets) normalized.repsCompleted.push('');
+            while (normalized.setTypes.length < sets) normalized.setTypes.push('normal');
             while (normalized.prFlags.length < sets) normalized.prFlags.push(null);
 
             return normalized;
+        }
+
+        function getSetTypeLabel(setType, setIndex) {
+            if (setType === 'warmup') return 'Rozgrzewka (W)';
+            if (setType === 'drop') return 'Drop Set (D)';
+            if (setType === 'failure') return 'Do upadku (F)';
+            return `Seria ${setIndex + 1}`;
+        }
+
+        function getSetTypeClass(setType) {
+            if (setType === 'warmup') return 'is-warmup';
+            if (setType === 'drop') return 'is-drop-set';
+            if (setType === 'failure') return 'is-failure';
+            return '';
+        }
+
+        function cycleSetType(currentType) {
+            if (currentType === 'warmup') return 'drop';
+            if (currentType === 'drop') return 'failure';
+            if (currentType === 'failure') return 'normal';
+            return 'warmup';
         }
 
         function renderWorkoutEditorModal() {
@@ -5260,29 +5710,49 @@
                 html += `
                     <div class="exercise-item workout-editor-exercise-card" data-editor-ex-index="${exIndex}">
                         <div class="workout-editor-exercise-header">
-                            <input type="text" data-field="name" data-ex-index="${exIndex}" value="${escapeHtml(ex.name)}" placeholder="Nazwa ćwiczenia" style="margin:0;">
-                            <button type="button" class="btn-danger" data-action="delete-exercise" data-ex-index="${exIndex}" style="width:auto; padding:8px 10px;">
+                            <input class="workout-editor-ex-name" type="text" data-field="name" data-ex-index="${exIndex}" value="${escapeHtml(ex.name)}" placeholder="Nazwa ćwiczenia" style="margin:0;">
+                            <button type="button" class="btn-danger" data-action="delete-exercise" data-ex-index="${exIndex}" style="width:auto; padding:10px 12px;">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                         <div class="workout-editor-set-actions">
-                            <button type="button" class="btn-info" data-action="add-set" data-ex-index="${exIndex}" style="width:auto; padding:8px 10px;">+ Seria</button>
-                            <button type="button" class="btn-secondary" data-action="remove-set" data-ex-index="${exIndex}" style="width:auto; padding:8px 10px;" ${ex.sets <= 1 ? 'disabled' : ''}>- Seria</button>
+                            <button type="button" class="btn-info" data-action="add-set" data-ex-index="${exIndex}"><i class="fas fa-plus"></i> Seria</button>
+                            <button type="button" class="btn-secondary" data-action="remove-set" data-ex-index="${exIndex}" ${ex.sets <= 1 ? 'disabled' : ''}><i class="fas fa-minus"></i> Seria</button>
                         </div>
                         <div class="workout-editor-sets">
                 `;
                 for (let setIndex = 0; setIndex < ex.sets; setIndex++) {
                     const completed = !!ex.completedSets[setIndex];
+                    const setType = ex.setTypes[setIndex] || 'normal';
                     const weight = ex.weights[setIndex] || '';
                     const repsCompleted = ex.repsCompleted[setIndex] || '';
                     html += `
-                        <div class="workout-editor-set-row">
-                            <label style="display:flex; align-items:center; gap:6px; margin:0; font-size:0.85rem;">
-                                <input type="checkbox" data-field="completed" data-ex-index="${exIndex}" data-set-index="${setIndex}" ${completed ? 'checked' : ''}>
-                                ${setIndex + 1}
-                            </label>
-                            <input type="number" min="0" step="0.5" data-field="weight" data-ex-index="${exIndex}" data-set-index="${setIndex}" value="${escapeHtml(String(weight))}" placeholder="kg" style="margin:0;">
-                            <input type="number" min="0" step="1" data-field="repsCompleted" data-ex-index="${exIndex}" data-set-index="${setIndex}" value="${escapeHtml(String(repsCompleted))}" placeholder="powt." style="margin:0;">
+                        <div class="workout-editor-set-card ${completed ? 'is-completed' : ''} ${getSetTypeClass(setType)}">
+                            <div class="workout-editor-set-head">
+                                <div class="workout-editor-set-index type-toggle" data-action="toggle-set-type" data-ex-index="${exIndex}" data-set-index="${setIndex}">${getSetTypeLabel(setType, setIndex)}</div>
+                                <button type="button" class="workout-editor-complete-btn ${completed ? 'is-active' : ''}" data-action="toggle-completed" data-ex-index="${exIndex}" data-set-index="${setIndex}">
+                                    <i class="fas ${completed ? 'fa-check-square' : 'fa-square'}"></i>
+                                    Wykonana
+                                </button>
+                            </div>
+                            <div class="workout-editor-metrics">
+                                <div class="workout-editor-metric">
+                                    <div class="workout-editor-metric-label">Ciężar (kg)</div>
+                                    <div class="workout-editor-stepper">
+                                        <button type="button" class="btn-secondary" data-action="stepper" data-field="weight" data-dir="-1" data-ex-index="${exIndex}" data-set-index="${setIndex}">-</button>
+                                        <input type="number" min="0" step="0.5" data-field="weight" data-ex-index="${exIndex}" data-set-index="${setIndex}" value="${escapeHtml(String(weight))}" placeholder="kg" style="margin:0;">
+                                        <button type="button" class="btn-secondary" data-action="stepper" data-field="weight" data-dir="1" data-ex-index="${exIndex}" data-set-index="${setIndex}">+</button>
+                                    </div>
+                                </div>
+                                <div class="workout-editor-metric">
+                                    <div class="workout-editor-metric-label">Powtórzenia</div>
+                                    <div class="workout-editor-stepper">
+                                        <button type="button" class="btn-secondary" data-action="stepper" data-field="repsCompleted" data-dir="-1" data-ex-index="${exIndex}" data-set-index="${setIndex}">-</button>
+                                        <input type="number" min="0" step="1" data-field="repsCompleted" data-ex-index="${exIndex}" data-set-index="${setIndex}" value="${escapeHtml(String(repsCompleted))}" placeholder="powt." style="margin:0;">
+                                        <button type="button" class="btn-secondary" data-action="stepper" data-field="repsCompleted" data-dir="1" data-ex-index="${exIndex}" data-set-index="${setIndex}">+</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
@@ -5296,6 +5766,19 @@
 
         function handleWorkoutEditorClick(e) {
             if (!workoutEditorState || !workoutEditorState.draft) return;
+            const setTypeToggle = e.target.closest('[data-action="toggle-set-type"]');
+            if (setTypeToggle) {
+                const exIndex = parseInt(setTypeToggle.dataset.exIndex);
+                const setIndex = parseInt(setTypeToggle.dataset.setIndex);
+                if (isNaN(exIndex) || isNaN(setIndex)) return;
+                const exercises = workoutEditorState.draft.exercises;
+                if (!Array.isArray(exercises) || !exercises[exIndex]) return;
+                const ex = normalizeWorkoutExercise(exercises[exIndex]);
+                ex.setTypes[setIndex] = cycleSetType(ex.setTypes[setIndex]);
+                exercises[exIndex] = ex;
+                renderWorkoutEditorList();
+                return;
+            }
             const btn = e.target.closest('button');
             if (!btn) return;
 
@@ -5306,7 +5789,8 @@
                     reps: 10,
                     completedSets: [false, false, false],
                     weights: ['', '', ''],
-                    repsCompleted: ['', '', '']
+                    repsCompleted: ['', '', ''],
+                    setTypes: ['normal', 'normal', 'normal']
                 }));
                 renderWorkoutEditorList();
                 return;
@@ -5329,6 +5813,7 @@
                 ex.completedSets.push(false);
                 ex.weights.push('');
                 ex.repsCompleted.push('');
+                ex.setTypes.push('normal');
                 ex.prFlags.push(null);
                 exercises[exIndex] = ex;
                 renderWorkoutEditorList();
@@ -5341,7 +5826,42 @@
                 ex.completedSets = ex.completedSets.slice(0, ex.sets);
                 ex.weights = ex.weights.slice(0, ex.sets);
                 ex.repsCompleted = ex.repsCompleted.slice(0, ex.sets);
+                ex.setTypes = ex.setTypes.slice(0, ex.sets);
                 ex.prFlags = ex.prFlags.slice(0, ex.sets);
+                exercises[exIndex] = ex;
+                renderWorkoutEditorList();
+                return;
+            }
+
+            if (action === 'stepper') {
+                const field = btn.dataset.field;
+                const dir = parseInt(btn.dataset.dir);
+                const setIndex = parseInt(btn.dataset.setIndex);
+                if (!field || isNaN(dir) || isNaN(setIndex)) return;
+                const ex = normalizeWorkoutExercise(exercises[exIndex]);
+                const isReps = field === 'repsCompleted';
+                const step = isReps ? 1 : 0.5;
+                const source = isReps ? ex.repsCompleted[setIndex] : ex.weights[setIndex];
+                const current = parseFloat(String(source || '').replace(',', '.'));
+                let next = (isNaN(current) ? 0 : current) + (dir * step);
+                if (next < 0) next = 0;
+
+                if (isReps) {
+                    ex.repsCompleted[setIndex] = String(Math.round(next));
+                } else {
+                    const rounded = Math.round(next * 10) / 10;
+                    ex.weights[setIndex] = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+                }
+                exercises[exIndex] = ex;
+                renderWorkoutEditorList();
+                return;
+            }
+
+            if (action === 'toggle-completed') {
+                const setIndex = parseInt(btn.dataset.setIndex);
+                if (isNaN(setIndex)) return;
+                const ex = normalizeWorkoutExercise(exercises[exIndex]);
+                ex.completedSets[setIndex] = !ex.completedSets[setIndex];
                 exercises[exIndex] = ex;
                 renderWorkoutEditorList();
             }
@@ -5832,20 +6352,9 @@
             return rows;
         }
 
-        function loadShareLogo(src) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.decoding = 'async';
-                img.onload = () => resolve(img);
-                img.onerror = () => resolve(null);
-                img.src = src;
-                if (img.complete && img.naturalWidth > 0) resolve(img);
-            });
-        }
-
         function generateWorkoutSharePngBlob(workout) {
             return new Promise((resolve, reject) => {
-                const done = async () => {
+                const done = () => {
                     const W = 1080;
                     const H = 1350;
                     const canvas = document.createElement('canvas');
@@ -5868,18 +6377,10 @@
 
                     let y = 100;
                     ctx.textBaseline = 'top';
-                    const logoSize = 82;
-                    const logo = await loadShareLogo('gymcut-logo.png');
-                    if (logo) {
-                        ctx.drawImage(logo, 64, y, logoSize, logoSize);
-                    } else {
-                        ctx.fillStyle = '#5C95FF';
-                        ctx.fillRect(64, y, logoSize, logoSize);
-                    }
                     ctx.fillStyle = '#E9ECEF';
-                    ctx.font = 'bold 56px Poppins, Inter, system-ui, sans-serif';
-                    ctx.fillText('GymCut', 64 + logoSize + 24, y + 8);
-                    y += 98;
+                    ctx.font = 'italic 900 72px Poppins, Inter, system-ui, sans-serif';
+                    ctx.fillText('GYMCUT', 64, y);
+                    y += 96;
 
                     ctx.fillStyle = '#8B949E';
                     ctx.font = '28px Inter, system-ui, sans-serif';
@@ -5965,10 +6466,6 @@
                             y += 48;
                         });
                     }
-
-                    ctx.fillStyle = '#4B5563';
-                    ctx.font = '22px Inter, system-ui, sans-serif';
-                    ctx.fillText('gymcut • udostępnij w Instagram / Stories', 64, H - 72);
 
                     canvas.toBlob((blob) => {
                         if (blob) resolve(blob);
@@ -6901,9 +7398,11 @@
             if (!Array.isArray(exercise.completedSets)) exercise.completedSets = [];
             if (!Array.isArray(exercise.weights)) exercise.weights = [];
             if (!Array.isArray(exercise.repsCompleted)) exercise.repsCompleted = [];
+            if (!Array.isArray(exercise.setTypes)) exercise.setTypes = [];
             exercise.completedSets.push(false);
             exercise.weights.push('');
             exercise.repsCompleted.push('');
+            exercise.setTypes.push('normal');
             saveCurrentWorkout();
 
             // Odśwież widok
@@ -6970,7 +7469,11 @@
             if (exercise.progression) {
                 const progBanner = document.createElement('div');
                 progBanner.className = 'focus-progression-banner';
-                progBanner.innerHTML = '<span class="progression-icon">📈</span> Progresja — zwiększ obciążenie!';
+                const justArmed = progressionArmedExerciseIndexes.has(index);
+                const msg = justArmed
+                    ? 'Progres ustawiony na następny trening. Dziś dokończ technicznie 💪'
+                    : 'Czas na progres! Ostatnio poszło gładko. Podbijamy stawkę?';
+                progBanner.innerHTML = `<span class="progression-icon">📈</span> ${msg}`;
                 progBanner.style.cursor = 'default';
                 content.appendChild(progBanner);
             }
@@ -6986,6 +7489,10 @@
                 setBox.className = 'focus-set-box set-box'; // Zachowujemy klasę set-box dla logiki
                 setBox.dataset.setIndex = i;
                 setBox.dataset.exIndex = index; // Ważne dla obsługi zdarzeń
+
+                const setType = (exercise.setTypes && exercise.setTypes[i]) ? exercise.setTypes[i] : 'normal';
+                const setTypeClass = getSetTypeClass(setType);
+                if (setTypeClass) setBox.classList.add(setTypeClass);
 
                 if (exercise.completedSets[i]) {
                     setBox.classList.add('completed');
@@ -7004,7 +7511,11 @@
                 header.className = 'focus-set-header';
 
                 const label = document.createElement('span');
-                label.textContent = `Seria ${i + 1}`;
+                label.className = 'focus-set-label type-toggle';
+                label.dataset.action = 'toggle-set-type';
+                label.dataset.exIndex = index;
+                label.dataset.setIndex = i;
+                label.textContent = getSetTypeLabel(setType, i);
 
                 // Info o poprzednim treningu dla tej serii
                 if (prevData && prevData[i]) {
@@ -7134,6 +7645,21 @@
         }
 
         function handleFocusModeClicks(e) {
+            const setTypeToggle = e.target.closest('[data-action="toggle-set-type"]');
+            if (setTypeToggle) {
+                const exIndex = parseInt(setTypeToggle.dataset.exIndex);
+                const setIndex = parseInt(setTypeToggle.dataset.setIndex);
+                if (!isNaN(exIndex) && !isNaN(setIndex)) {
+                    const exercise = currentWorkout.exercises[exIndex];
+                    if (exercise) {
+                        exercise.setTypes = Array.isArray(exercise.setTypes) ? exercise.setTypes : Array(exercise.sets || 0).fill('normal');
+                        exercise.setTypes[setIndex] = cycleSetType(exercise.setTypes[setIndex]);
+                        saveCurrentWorkout();
+                        renderFocusExercise(exIndex);
+                    }
+                }
+                return;
+            }
             const stepperBtn = e.target.closest('.stepper-btn');
             if (stepperBtn) {
                 const stepper = stepperBtn.closest('.stepper');
@@ -7187,6 +7713,7 @@
                 completedSets: Array(numSets).fill(false),
                 weights: Array(numSets).fill(''),
                 repsCompleted: Array(numSets).fill(''),
+                setTypes: Array(numSets).fill('normal'),
                 isAdHoc: true
             };
 
@@ -7291,6 +7818,8 @@
             if (!currentWorkout || !currentWorkout.exercises[exerciseIndex]) return;
             const exercise = currentWorkout.exercises[exerciseIndex];
             exercise.progression = !exercise.progression;
+            if (exercise.progression) progressionArmedExerciseIndexes.add(exerciseIndex);
+            else progressionArmedExerciseIndexes.delete(exerciseIndex);
             saveCurrentWorkout();
 
             // Zaktualizuj też w planie treningowym
@@ -7302,7 +7831,12 @@
                 }
             }
 
-            showToast(exercise.progression ? 'Progresja włączona 📈' : 'Progresja wyłączona', exercise.progression ? 'success' : 'info');
+            showToast(
+                exercise.progression
+                    ? 'Zapisane. W następnym treningu spróbuj dołożyć progres 📈'
+                    : 'Progresja wyłączona',
+                exercise.progression ? 'success' : 'info'
+            );
         }
 
         function updateFocusWeight(exIndex, setIndex, value) {
