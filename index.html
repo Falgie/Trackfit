@@ -208,15 +208,17 @@
             height: 40px;
             margin-top: 0;
             font-size: 16px;
-            transition: background-color 0.2s ease, color 0.3s ease;
+            transition: background-color 0.2s ease, color 0.3s ease, border-color 0.2s ease;
             cursor: pointer;
             position: relative;
             flex-shrink: 0;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-sizing: border-box;
         }
 
         [data-theme="light"] .pr-button {
             background: rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 0, 0, 0.08);
         }
 
         .pr-button:active {
@@ -1939,6 +1941,125 @@
             font-size: 0.9rem;
             color: var(--text-muted);
             padding-left: 15px;
+        }
+
+        /* --- Rekordy osobiste (modal PR) --- */
+        #modal-content .pr-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .pr-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-color);
+        }
+
+        .pr-section-title i {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .pr-section-title--alltime i {
+            background: rgba(250, 204, 21, 0.18);
+            color: #b45309;
+        }
+
+        [data-theme="dark"] .pr-section-title--alltime i {
+            background: rgba(250, 204, 21, 0.14);
+            color: #fbbf24;
+        }
+
+        #modal-content .pr-item {
+            margin-bottom: 12px;
+            padding: 14px 16px;
+            background: var(--accent-secondary);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        #modal-content .pr-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pr-item-name {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1.25;
+        }
+
+        .pr-stat {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 10px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .pr-item .pr-stat:first-of-type {
+            margin-top: 12px;
+        }
+
+        .pr-stat-icon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .pr-stat--weight .pr-stat-icon {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .pr-stat--weight .pr-stat-icon {
+            background: rgba(96, 165, 250, 0.14);
+        }
+
+        .pr-stat--reps .pr-stat-icon {
+            background: rgba(16, 185, 129, 0.14);
+            color: var(--success);
+        }
+
+        [data-theme="dark"] .pr-stat--reps .pr-stat-icon {
+            background: rgba(52, 211, 153, 0.12);
+        }
+
+        .pr-stat-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pr-stat-body strong {
+            font-weight: 700;
+        }
+
+        #modal-content .pr-empty {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.45;
         }
 
         /* --- Style Trybu Skupienia (Z NAPRAWIONYM STEPPEREM DLA IOS) --- */
@@ -7210,129 +7331,44 @@
             return prs;
         }
 
-        function calculateSessionBests() {
-            const sessionBests = {};
-            if (!currentWorkout || !Array.isArray(currentWorkout.exercises)) return sessionBests;
-
-            currentWorkout.exercises.forEach(exercise => {
-                if (!exercise || typeof exercise !== 'object' || !exercise.name) return;
-                const exerciseName = exercise.name;
-
-                if (!sessionBests[exerciseName]) {
-                    sessionBests[exerciseName] = {
-                        maxWeight: null,
-                        maxReps: null,
-                        maxWeightReps: null,
-                        maxRepsWeight: null
-                    };
-                }
-
-                // Check weights and reps from completed sets
-                if (Array.isArray(exercise.weights) && Array.isArray(exercise.repsCompleted) && Array.isArray(exercise.completedSets)) {
-                    exercise.weights.forEach((weight, index) => {
-                        if (exercise.completedSets[index] && weight && exercise.repsCompleted[index]) {
-                            const weightNum = parseFloat(weight);
-                            const repsNum = parseInt(exercise.repsCompleted[index]);
-
-                            if (!isNaN(weightNum) && !isNaN(repsNum)) {
-                                // Max weight
-                                if (sessionBests[exerciseName].maxWeight === null || weightNum > sessionBests[exerciseName].maxWeight) {
-                                    sessionBests[exerciseName].maxWeight = weightNum;
-                                    sessionBests[exerciseName].maxWeightReps = repsNum;
-                                }
-
-                                // Max reps
-                                if (sessionBests[exerciseName].maxReps === null || repsNum > sessionBests[exerciseName].maxReps) {
-                                    sessionBests[exerciseName].maxReps = repsNum;
-                                    sessionBests[exerciseName].maxRepsWeight = weightNum;
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-
-            return sessionBests;
-        }
-
         function showPRModal() {
             const allTimePRs = calculateAllTimePRs();
-            const sessionBests = calculateSessionBests();
 
             let html = '<div class="pr-container">';
 
-            // All-time PRs section
             html += '<div class="pr-section">';
-            html += '<h3 style="margin-top: 0; color: var(--primary);"><i class="fas fa-trophy"></i> Rekordy osobiste (wszystkie treningi)</h3>';
+            html += '<h3 class="pr-section-title pr-section-title--alltime"><i class="fas fa-trophy" aria-hidden="true"></i><span>Rekordy osobiste (wszystkie treningi)</span></h3>';
 
             const allTimeExercises = Object.keys(allTimePRs).filter(name =>
                 allTimePRs[name].maxWeight !== null || allTimePRs[name].maxReps !== null
             );
 
             if (allTimeExercises.length === 0) {
-                html += '<p style="color: var(--text-muted);">Brak zapisanych rekordów.</p>';
+                html += '<p class="pr-empty">Brak zapisanych rekordów.</p>';
             } else {
                 allTimeExercises.forEach(exerciseName => {
                     const pr = allTimePRs[exerciseName];
-                    html += '<div class="pr-item" style="margin-bottom: 15px; padding: 12px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">';
-                    html += `<strong style="font-size: 1.1rem; color: var(--text-color);">${exerciseName}</strong>`;
+                    html += '<div class="pr-item">';
+                    html += `<strong class="pr-item-name">${exerciseName}</strong>`;
 
                     if (pr.maxWeight !== null) {
-                        html += `<div style="margin-top: 8px; color: var(--text-color);">`;
-                        html += `<i class="fas fa-weight-hanging" style="color: var(--accent-color);"></i> Maksymalna waga: <strong>${pr.maxWeight} kg</strong>`;
+                        html += '<div class="pr-stat pr-stat--weight">';
+                        html += '<span class="pr-stat-icon"><i class="fas fa-weight-hanging" aria-hidden="true"></i></span>';
+                        html += '<span class="pr-stat-body">Maksymalna waga: <strong>' + pr.maxWeight + ' kg</strong>';
                         if (pr.maxWeightReps !== null) {
-                            html += ` x ${pr.maxWeightReps} powt.`;
+                            html += ' x ' + pr.maxWeightReps + ' powt.';
                         }
-                        html += '</div>';
+                        html += '</span></div>';
                     }
 
                     if (pr.maxReps !== null) {
-                        html += `<div style="margin-top: 6px; color: var(--text-color);">`;
-                        html += `<i class="fas fa-redo" style="color: var(--success);"></i> Maksymalne powtórzenia: <strong>${pr.maxReps}</strong>`;
+                        html += '<div class="pr-stat pr-stat--reps">';
+                        html += '<span class="pr-stat-icon"><i class="fas fa-redo" aria-hidden="true"></i></span>';
+                        html += '<span class="pr-stat-body">Maksymalne powtórzenia: <strong>' + pr.maxReps + '</strong>';
                         if (pr.maxRepsWeight !== null) {
-                            html += ` x ${pr.maxRepsWeight} kg`;
+                            html += ' x ' + pr.maxRepsWeight + ' kg';
                         }
-                        html += '</div>';
-                    }
-
-                    html += '</div>';
-                });
-            }
-
-            html += '</div>';
-
-            // Current session bests section
-            html += '<div class="pr-section" style="margin-top: 25px;">';
-            html += '<h3 style="color: var(--success);"><i class="fas fa-fire"></i> Najlepsze wyniki tego treningu</h3>';
-
-            const sessionExercises = Object.keys(sessionBests).filter(name =>
-                sessionBests[name].maxWeight !== null || sessionBests[name].maxReps !== null
-            );
-
-            if (sessionExercises.length === 0) {
-                html += '<p style="color: var(--text-muted);">Brak ukończonych serii w bieżącym treningu.</p>';
-            } else {
-                sessionExercises.forEach(exerciseName => {
-                    const best = sessionBests[exerciseName];
-                    html += '<div class="pr-item" style="margin-bottom: 15px; padding: 12px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">';
-                    html += `<strong style="font-size: 1.1rem; color: var(--text-color);">${exerciseName}</strong>`;
-
-                    if (best.maxWeight !== null) {
-                        html += `<div style="margin-top: 8px; color: var(--text-color);">`;
-                        html += `<i class="fas fa-weight-hanging" style="color: var(--accent-color);"></i> Największa waga: <strong>${best.maxWeight} kg</strong>`;
-                        if (best.maxWeightReps !== null) {
-                            html += ` x ${best.maxWeightReps} powt.`;
-                        }
-                        html += '</div>';
-                    }
-
-                    if (best.maxReps !== null) {
-                        html += `<div style="margin-top: 6px; color: var(--text-color);">`;
-                        html += `<i class="fas fa-redo" style="color: var(--success);"></i> Najwięcej powtórzeń: <strong>${best.maxReps}</strong>`;
-                        if (best.maxRepsWeight !== null) {
-                            html += ` x ${best.maxRepsWeight} kg`;
-                        }
-                        html += '</div>';
+                        html += '</span></div>';
                     }
 
                     html += '</div>';
@@ -7342,7 +7378,7 @@
             html += '</div>';
             html += '</div>';
 
-            showModal('Rekordy osobiste i najlepsze wyniki', html);
+            showModal('Rekordy osobiste', html);
         }
 
 
