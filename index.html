@@ -4022,9 +4022,14 @@
                     closeHistoryActionsSheet();
                     viewWorkoutDetails(workoutId);
                 } else if (t.id === 'history-sheet-share') {
-                    closeHistoryActionsSheet();
+                    e.preventDefault();
+                    e.stopPropagation();
                     const w = workoutHistory.find(x => x && x.id === workoutId);
-                    if (w) shareWorkoutAsImage(w);
+                    if (w) {
+                        shareWorkoutAsImage(w).finally(() => closeHistoryActionsSheet());
+                    } else {
+                        closeHistoryActionsSheet();
+                    }
                 } else if (t.id === 'history-sheet-edit') {
                     closeHistoryActionsSheet();
                     openWorkoutEditor(workoutId);
