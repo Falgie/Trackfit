@@ -18,6 +18,8 @@
     <link rel="icon" type="image/png" sizes="184x184" href="app-icon-mobile.png">
     <link rel="apple-touch-icon" href="app-icon-mobile.png">
 
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="2d38db53-e8ae-4163-994e-1becd128c78b"></script>
+
     <style>
         :root {
             /* --- ORYGINALNE ZMIENNE (ZACHOWANE) --- */
@@ -880,6 +882,15 @@
             background: var(--accent-secondary);
             color: var(--text-color);
             touch-action: manipulation;
+        }
+
+        a.plan-actions-sheet-item {
+            text-decoration: none;
+            box-sizing: border-box;
+            cursor: pointer;
+            border: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .plan-actions-sheet-item.plan-actions-sheet-danger {
@@ -3675,6 +3686,10 @@
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-toggle">
                 <i class="fas fa-adjust" aria-hidden="true"></i> Zmień motyw
             </button>
+            <a href="https://ko-fi.com/gymcut" id="theme-sheet-kofi" target="_blank" rel="noopener noreferrer"
+                class="plan-actions-sheet-item">
+                <i class="fas fa-mug-hot" aria-hidden="true"></i> Wspieraj na Ko-fi
+            </a>
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-import-strong-hevy">
                 <i class="fas fa-file-import" aria-hidden="true"></i> Importowanie danych
             </button>
@@ -4124,6 +4139,10 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#theme-settings-sheet-backdrop')) {
+                    closeThemeSettingsSheet();
+                    return;
+                }
+                if (e.target.closest('#theme-sheet-kofi')) {
                     closeThemeSettingsSheet();
                     return;
                 }
