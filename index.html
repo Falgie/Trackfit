@@ -166,6 +166,14 @@
             flex-grow: 1;
             /* FIX: Dodatkowy padding na dole, żeby treść nie wchodziła pod navbar na iOS */
             padding-bottom: 20px;
+            display: grid;
+        }
+
+        .container>.tab-content {
+            grid-area: 1 / 1;
+            align-self: start;
+            width: 100%;
+            min-width: 0;
         }
 
         header {
@@ -439,6 +447,164 @@
         .tab-content.active {
             display: block;
             opacity: 1;
+        }
+
+        @keyframes tabEnterFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(26px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes tabEnterFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-26px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .tab-content.tab-enter-from-right {
+            animation: tabEnterFromRight 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+        }
+
+        .tab-content.tab-enter-from-left {
+            animation: tabEnterFromLeft 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+        }
+
+        @keyframes screenShakePulse {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+
+            15% {
+                transform: translate3d(-5px, 2px, 0) scale(1.008);
+            }
+
+            30% {
+                transform: translate3d(5px, -2px, 0) scale(1.01);
+            }
+
+            45% {
+                transform: translate3d(-4px, -2px, 0) scale(1.006);
+            }
+
+            60% {
+                transform: translate3d(4px, 1px, 0) scale(1.004);
+            }
+
+            75% {
+                transform: translate3d(-2px, 0, 0) scale(1.002);
+            }
+
+            100% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+        }
+
+        body.screen-shake-pr {
+            animation: screenShakePulse 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        body.screen-shake-streak {
+            animation: screenShakePulse 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .workout-reward-fullscreen {
+            position: fixed;
+            inset: 0;
+            z-index: 4800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+            background: radial-gradient(120% 80% at 50% 20%, rgba(92, 149, 255, 0.22), transparent 55%),
+                linear-gradient(165deg, var(--card-bg) 0%, var(--bg-color) 45%, var(--card-bg) 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .workout-reward-fullscreen.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .workout-reward-fullscreen.hidden {
+            display: none !important;
+        }
+
+        .workout-reward-fullscreen-inner {
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            max-height: min(92vh, 720px);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+        }
+
+        .workout-reward-fullscreen-title {
+            font-family: "Poppins", sans-serif;
+            font-size: clamp(1.35rem, 4.5vw, 1.75rem);
+            font-weight: 900;
+            color: var(--text-color);
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        #workout-reward-body-mount {
+            text-align: center;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            min-height: 0;
+            padding: 0 2px;
+        }
+
+        #workout-reward-body-mount .reward-summary {
+            text-align: center;
+        }
+
+        .workout-reward-fullscreen-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        #workout-reward-share {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        #workout-reward-continue {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .tab-content.tab-enter-from-right,
+            .tab-content.tab-enter-from-left {
+                animation: none !important;
+            }
+
+            body.screen-shake-pr,
+            body.screen-shake-streak {
+                animation: none !important;
+            }
         }
 
         h2 {
@@ -782,7 +948,7 @@
         }
 
         .plan-actions-bar .plan-start-pill:active {
-            transform: scale(0.98);
+            transform: scale(0.94);
         }
 
         .plan-actions-bar .btn-plan-more {
@@ -2284,6 +2450,129 @@
             }
         }
 
+        /* --- Duolingo-style micro-interactions (spring press, stagger, nav pop) --- */
+        @keyframes navPop {
+            0% {
+                transform: scale(1);
+            }
+
+            55% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .nav-item.nav-tab-pop i {
+            animation: navPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .btn-success:not(:disabled),
+        .btn-danger#focus-end-btn:not(:disabled),
+        button.plan-start-pill:not(:disabled),
+        #focus-nav-next:not(:disabled) {
+            transition: background-color 0.2s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.12s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .btn-success:not(:disabled):active,
+        .btn-danger#focus-end-btn:not(:disabled):active,
+        button.plan-start-pill:not(:disabled):active,
+        #focus-nav-next:not(:disabled):active {
+            transform: scale(0.94);
+            filter: brightness(0.96);
+            opacity: 1;
+        }
+
+        @keyframes rewardPop {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.92);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .reward-summary .reward-stats-grid .reward-stat {
+            animation: rewardPop 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .reward-summary .reward-stats-grid .reward-stat:nth-child(1) {
+            animation-delay: 0.04s;
+        }
+
+        .reward-summary .reward-stats-grid .reward-stat:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .reward-summary .reward-stats-grid .reward-stat:nth-child(3) {
+            animation-delay: 0.16s;
+        }
+
+        @keyframes modalBodyEnter {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        #modal-content.modal-body--enter {
+            animation: modalBodyEnter 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes setCompletePop {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            45% {
+                transform: scale(1.035);
+                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.28);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .focus-set-box.set-complete-pop {
+            animation: setCompletePop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .nav-item.nav-tab-pop i,
+            #modal-content.modal-body--enter,
+            .reward-summary .reward-stats-grid .reward-stat,
+            .focus-set-box.set-complete-pop {
+                animation: none !important;
+            }
+
+            .btn-success:not(:disabled),
+            .btn-danger#focus-end-btn:not(:disabled),
+            button.plan-start-pill:not(:disabled),
+            #focus-nav-next:not(:disabled) {
+                transition: background-color 0.2s ease, opacity 0.2s ease !important;
+            }
+
+            .btn-success:not(:disabled):active,
+            .btn-danger#focus-end-btn:not(:disabled):active,
+            button.plan-start-pill:not(:disabled):active,
+            #focus-nav-next:not(:disabled):active {
+                transform: none;
+            }
+        }
+
         .focus-set-header {
             display: flex;
             justify-content: space-between;
@@ -3646,6 +3935,9 @@
             <button type="button" class="plan-actions-sheet-item btn-edit-plan" id="plan-sheet-edit">
                 <i class="fas fa-pen" aria-hidden="true"></i> Edytuj plan
             </button>
+            <button type="button" class="plan-actions-sheet-item" id="plan-sheet-rename">
+                <i class="fas fa-signature" aria-hidden="true"></i> Zmień nazwę
+            </button>
             <button type="button" class="plan-actions-sheet-item plan-actions-sheet-danger btn-delete-plan"
                 id="plan-sheet-delete">
                 <i class="fas fa-trash" aria-hidden="true"></i> Usuń plan
@@ -3685,6 +3977,9 @@
             <h3 id="theme-settings-sheet-title" class="plan-actions-sheet-title">Wygląd</h3>
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-toggle">
                 <i class="fas fa-adjust" aria-hidden="true"></i> Zmień motyw
+            </button>
+            <button type="button" class="plan-actions-sheet-item" id="theme-sheet-ui-sounds-toggle" aria-pressed="false">
+                <i class="fas fa-volume-high" aria-hidden="true"></i> <span id="theme-sheet-ui-sounds-label">Dźwięki interfejsu: wyłączone</span>
             </button>
             <a href="https://ko-fi.com/gymcut" id="theme-sheet-kofi" target="_blank" rel="noopener noreferrer"
                 class="plan-actions-sheet-item">
@@ -3731,13 +4026,27 @@
         </div>
     </div>
 
+    <div id="workout-reward-fullscreen" class="workout-reward-fullscreen hidden" role="dialog" aria-modal="true"
+        aria-labelledby="workout-reward-fullscreen-title" aria-hidden="true">
+        <div class="workout-reward-fullscreen-inner">
+            <h2 id="workout-reward-fullscreen-title" class="workout-reward-fullscreen-title">Trening ukończony</h2>
+            <div id="workout-reward-body-mount"></div>
+            <div class="workout-reward-fullscreen-actions">
+                <button type="button" class="btn-success" id="workout-reward-share">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i> Udostępnij trening
+                </button>
+                <button type="button" class="btn-secondary" id="workout-reward-continue">Gotowe</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-backdrop" class="hidden"></div>
     <div id="modal" class="hidden">
         <div id="modal-header">
             <h3 id="modal-title"></h3>
             <button id="modal-close-btn">&times;</button>
         </div>
-        <div id="modal-content"></div>
+        <div id="modal-content" class="modal-body"></div>
     </div>
 
     <!-- Review Popup Overlay -->
@@ -3840,7 +4149,9 @@
 
         function showModal(title, contentHtml, onModalReady = null) {
             document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-content').innerHTML = contentHtml;
+            const content = document.getElementById('modal-content');
+            content.classList.remove('modal-body--enter');
+            content.innerHTML = contentHtml;
             const backdrop = document.getElementById('modal-backdrop');
             const modal = document.getElementById('modal');
             backdrop.classList.remove('hidden');
@@ -3853,6 +4164,15 @@
             if (onModalReady) {
                 onModalReady();
             }
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    content.classList.add('modal-body--enter');
+                    const clearEnter = () => content.classList.remove('modal-body--enter');
+                    content.addEventListener('animationend', clearEnter, { once: true });
+                    setTimeout(clearEnter, 520);
+                });
+            });
         }
 
         function resetTemplatePillsToAll() {
@@ -3866,6 +4186,7 @@
             closeThemeSettingsSheet();
             const sheet = document.getElementById('quick-workout-sheet');
             if (!sheet) return;
+            quickWorkoutSheetOpenedAt = Date.now();
             sheet.classList.remove('hidden');
             requestAnimationFrame(() => {
                 sheet.classList.add('is-open');
@@ -3921,6 +4242,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#quick-workout-sheet-backdrop')) {
+                    if (Date.now() - quickWorkoutSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closeQuickWorkoutSheet({ clearEmptySession: true, resetPills: true });
                     return;
                 }
@@ -3937,6 +4259,7 @@
             closeQuickWorkoutSheet({ clearEmptySession: true, resetPills: true });
             const sheet = document.getElementById('plan-actions-sheet');
             if (!sheet) return;
+            planActionsSheetOpenedAt = Date.now();
             sheet.dataset.planId = planId;
             const titleEl = document.getElementById('plan-actions-sheet-title');
             if (titleEl) titleEl.textContent = planName && planName.trim() ? planName.trim() : 'Plan';
@@ -3980,6 +4303,7 @@
             closeQuickWorkoutSheet({ clearEmptySession: false, resetPills: false });
             const sheet = document.getElementById('history-actions-sheet');
             if (!sheet) return;
+            historyActionsSheetOpenedAt = Date.now();
             sheet.dataset.workoutId = workoutId;
             const titleEl = document.getElementById('history-actions-sheet-title');
             if (titleEl) titleEl.textContent = workoutLabel && workoutLabel.trim() ? workoutLabel.trim() : 'Trening';
@@ -4022,6 +4346,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#history-actions-sheet-backdrop')) {
+                    if (Date.now() - historyActionsSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closeHistoryActionsSheet();
                     return;
                 }
@@ -4060,6 +4385,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#plan-actions-sheet-backdrop')) {
+                    if (Date.now() - planActionsSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closePlanActionsSheet();
                     return;
                 }
@@ -4071,6 +4397,11 @@
                 }
                 const planId = sheet.dataset.planId;
                 if (!planId) return;
+                if (t.id === 'plan-sheet-rename') {
+                    closePlanActionsSheet();
+                    showRenamePlanModal(planId);
+                    return;
+                }
                 if (t.classList.contains('btn-edit-plan')) {
                     closePlanActionsSheet();
                     showPlanEditor(planId);
@@ -4097,7 +4428,9 @@
             closeQuickWorkoutSheet({ clearEmptySession: true, resetPills: true });
             const sheet = document.getElementById('theme-settings-sheet');
             if (!sheet) return;
+            themeSettingsSheetOpenedAt = Date.now();
             syncThemeSheetToggleButton();
+            syncThemeSheetUiSoundsLabel();
             sheet.classList.remove('hidden');
             requestAnimationFrame(() => {
                 sheet.classList.add('is-open');
@@ -4139,6 +4472,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#theme-settings-sheet-backdrop')) {
+                    if (Date.now() - themeSettingsSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closeThemeSettingsSheet();
                     return;
                 }
@@ -4155,6 +4489,10 @@
                 if (t.id === 'theme-sheet-toggle') {
                     toggleTheme();
                     closeThemeSettingsSheet();
+                    return;
+                }
+                if (t.id === 'theme-sheet-ui-sounds-toggle') {
+                    toggleUiSoundEnabled();
                     return;
                 }
                 if (t.id === 'theme-sheet-import-strong-hevy') {
@@ -4581,6 +4919,60 @@
             if (!celebration.rafId) celebration.rafId = requestAnimationFrame(celebrationFrame);
         }
 
+        function triggerScreenShakePulse(reason) {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const cls = reason === 'streak' ? 'screen-shake-streak' : 'screen-shake-pr';
+            document.body.classList.remove('screen-shake-pr', 'screen-shake-streak');
+            void document.body.offsetWidth;
+            document.body.classList.add(cls);
+            const done = () => document.body.classList.remove(cls);
+            document.body.addEventListener('animationend', done, { once: true });
+            setTimeout(done, reason === 'streak' ? 700 : 560);
+            try {
+                if (reason === 'streak') vibratePattern([18, 40, 22, 35, 28]);
+                else vibratePattern([22, 28, 22]);
+            } catch (e) { }
+        }
+
+        function showWorkoutRewardFullscreen(reward, savedWorkoutForShare) {
+            const root = document.getElementById('workout-reward-fullscreen');
+            const titleEl = document.getElementById('workout-reward-fullscreen-title');
+            const mount = document.getElementById('workout-reward-body-mount');
+            const shareBtn = document.getElementById('workout-reward-share');
+            const doneBtn = document.getElementById('workout-reward-continue');
+            if (!root || !titleEl || !mount || !shareBtn || !doneBtn) return;
+
+            titleEl.textContent = reward.title || 'Trening ukończony';
+            mount.innerHTML = reward.bodyHtml || '';
+
+            root.classList.remove('hidden', 'is-open');
+            root.setAttribute('aria-hidden', 'false');
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => root.classList.add('is-open'));
+            });
+
+            playUiSound('workoutDone');
+
+            let closed = false;
+            const finish = () => {
+                if (closed) return;
+                closed = true;
+                root.classList.remove('is-open');
+                root.setAttribute('aria-hidden', 'true');
+                setTimeout(() => {
+                    root.classList.add('hidden');
+                    mount.innerHTML = '';
+                }, 320);
+                doneBtn.onclick = null;
+                shareBtn.onclick = null;
+            };
+
+            doneBtn.onclick = finish;
+            shareBtn.onclick = () => {
+                shareWorkoutAsImage(savedWorkoutForShare).catch(() => { });
+            };
+        }
+
         // --- Weekly Streak (weeks with >=1 workout) ---
         function getIsoWeekId(date) {
             // ISO week date weeks start on Monday, week 1 is the week with the year's first Thursday
@@ -4658,6 +5050,7 @@
                 void el.offsetWidth;
                 el.classList.add('streak-burst');
                 setTimeout(() => el.classList.remove('streak-burst'), 720);
+                try { triggerScreenShakePulse('streak'); } catch (e) { }
             }
             saveData('weeklyStreakLast', streak);
         }
@@ -4672,10 +5065,19 @@
         let currentPlanId = null;
         let editingExerciseIndex = null;
         let timerSoundEnabled = true;
+        let uiSoundEnabled = false;
+        let uiAudioUnlocked = false;
         let currentFocusExerciseIndex = 0;
         let activeTabId = 'training-plans';
         const TAB_SWITCH_DELAY_MS = 120;
+        /** Ignoruj klik w backdrop zaraz po otwarciu (syntetyczny „ghost click” po touchend). */
+        const PLAN_SHEET_BACKDROP_SUPPRESS_MS = 550;
         let tabSwitchTimeout = null;
+        let historyActionsSheetOpenedAt = 0;
+        let planActionsSheetOpenedAt = 0;
+        let themeSettingsSheetOpenedAt = 0;
+        let quickWorkoutSheetOpenedAt = 0;
+        let historyEditSheetOpenedAt = 0;
         let expandedHistoryWorkoutIds = new Set();
         let workoutEditorState = null;
         let progressionArmedExerciseIndexes = new Set();
@@ -4702,6 +5104,10 @@
             if (savedSoundSetting !== null) { timerSoundEnabled = savedSoundSetting; }
             else { timerSoundEnabled = true; saveData('timerSoundEnabled', timerSoundEnabled); }
             updateSoundButton();
+
+            const savedUiSound = loadData('uiSoundEnabled');
+            uiSoundEnabled = savedUiSound === true;
+            syncThemeSheetUiSoundsLabel();
 
             const minutes = Math.floor(timerSeconds / 60);
             const secs = timerSeconds % 60;
@@ -4927,6 +5333,8 @@
             const target = e.target.closest('button');
             if (target) {
                 if (target.classList.contains('btn-history-more')) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const titleEl = workoutItem.querySelector('.exercise-header h4');
                     const label = titleEl ? titleEl.textContent : 'Trening';
                     openHistoryActionsSheet(workoutId, label);
@@ -4967,6 +5375,66 @@
                 pillSoundBtn.classList.toggle('sound-active', timerSoundEnabled);
                 pillSoundBtn.innerHTML = innerIcon;
             }
+        }
+
+        function syncThemeSheetUiSoundsLabel() {
+            const btn = document.getElementById('theme-sheet-ui-sounds-toggle');
+            if (!btn) return;
+            btn.setAttribute('aria-pressed', uiSoundEnabled ? 'true' : 'false');
+            const icon = uiSoundEnabled ? 'fa-volume-high' : 'fa-volume-xmark';
+            const txt = uiSoundEnabled ? 'włączone' : 'wyłączone';
+            btn.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i> <span id="theme-sheet-ui-sounds-label">Dźwięki interfejsu: ${txt}</span>`;
+        }
+
+        function toggleUiSoundEnabled() {
+            uiSoundEnabled = !uiSoundEnabled;
+            saveData('uiSoundEnabled', uiSoundEnabled);
+            syncThemeSheetUiSoundsLabel();
+        }
+
+        async function tryUnlockUiAudioContext() {
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (!Ctx) return;
+                if (!window._liftlogUiAudioCtx) window._liftlogUiAudioCtx = new Ctx();
+                const ctx = window._liftlogUiAudioCtx;
+                if (ctx.state === 'suspended') await ctx.resume();
+                uiAudioUnlocked = ctx.state === 'running';
+            } catch (e) {
+                uiAudioUnlocked = false;
+            }
+        }
+
+        function playUiSound(kind = 'ding') {
+            if (!uiSoundEnabled) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const run = async () => {
+                await tryUnlockUiAudioContext();
+                const ctx = window._liftlogUiAudioCtx;
+                if (!ctx || ctx.state !== 'running') return;
+                const now = ctx.currentTime;
+                const makeTone = (freq, start, dur, vol) => {
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + start);
+                    const v = Math.min(0.12, Math.max(0.0001, vol));
+                    g.gain.setValueAtTime(0.0001, now + start);
+                    g.gain.exponentialRampToValueAtTime(v, now + start + 0.015);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(now + start);
+                    osc.stop(now + start + dur + 0.03);
+                };
+                if (kind === 'workoutDone') {
+                    makeTone(523.25, 0, 0.1, 0.08);
+                    makeTone(659.25, 0.09, 0.12, 0.07);
+                } else {
+                    makeTone(587.33, 0, 0.11, 0.085);
+                }
+            };
+            run();
         }
 
         function setTimerPreset(seconds) {
@@ -5015,6 +5483,8 @@
             const newActiveTab = document.getElementById(tabId);
             if (!newActiveTab) return;
 
+            const previousTabId = activeTabId;
+
             if (tabSwitchTimeout) {
                 clearTimeout(tabSwitchTimeout);
                 tabSwitchTimeout = null;
@@ -5022,13 +5492,26 @@
 
             // Atomic tab switch: fast repeated taps cannot leave two sections visible.
             document.querySelectorAll('.tab-content').forEach((tab) => {
-                tab.classList.remove('active');
+                tab.classList.remove('active', 'tab-enter-from-right', 'tab-enter-from-left');
                 tab.style.display = 'none';
             });
 
-            document.querySelectorAll('.nav-item').forEach((item) => item.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach((item) => {
+                item.classList.remove('active', 'nav-tab-pop');
+            });
             const newActiveButton = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
-            if (newActiveButton) newActiveButton.classList.add('active');
+            if (newActiveButton) {
+                newActiveButton.classList.add('active');
+                if (!immediate) {
+                    requestAnimationFrame(() => {
+                        newActiveButton.classList.add('nav-tab-pop');
+                        const icon = newActiveButton.querySelector('i');
+                        const cleanup = () => newActiveButton.classList.remove('nav-tab-pop');
+                        if (icon) icon.addEventListener('animationend', cleanup, { once: true });
+                        setTimeout(cleanup, 520);
+                    });
+                }
+            }
 
             const fab = document.getElementById('fab-add-plan');
             if (tabId === 'training-plans') fab.classList.remove('hidden');
@@ -5039,6 +5522,16 @@
                 newActiveTab.style.display = 'block';
                 newActiveTab.offsetHeight;
                 newActiveTab.classList.add('active');
+                if (!immediate && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+                    const fromI = tabOrder.indexOf(previousTabId);
+                    const toI = tabOrder.indexOf(tabId);
+                    if (fromI !== -1 && toI !== -1 && fromI !== toI) {
+                        newActiveTab.classList.add(toI > fromI ? 'tab-enter-from-right' : 'tab-enter-from-left');
+                        const clearEnter = () => newActiveTab.classList.remove('tab-enter-from-right', 'tab-enter-from-left');
+                        newActiveTab.addEventListener('animationend', clearEnter, { once: true });
+                        setTimeout(clearEnter, 500);
+                    }
+                }
                 if (immediate) {
                     newActiveTab.offsetHeight;
                     newActiveTab.style.transition = '';
@@ -5190,6 +5683,71 @@
 
             addNewPlan(planName);
             hideModal();
+        }
+
+        function showRenamePlanModal(planId) {
+            const plan = trainingPlans.find(p => p && p.id === planId);
+            if (!plan) {
+                showToast('Nie znaleziono planu.', 'warning');
+                return;
+            }
+            const modalHtml = `
+                <div class="form-group">
+                    <label for="modal-rename-plan-name">Nowa nazwa planu</label>
+                    <input type="text" id="modal-rename-plan-name" placeholder="np. Push Day A" autocomplete="off">
+                </div>
+                <button type="button" id="modal-save-rename-plan" class="btn-success"><i class="fas fa-save"></i> Zapisz</button>
+            `;
+            showModal('Zmień nazwę planu', modalHtml, () => {
+                const inp = document.getElementById('modal-rename-plan-name');
+                if (inp) {
+                    inp.value = plan.name || '';
+                    inp.focus();
+                    inp.select();
+                }
+                const saveBtn = document.getElementById('modal-save-rename-plan');
+                if (saveBtn) saveBtn.addEventListener('click', () => saveRenamePlanFromModal(planId));
+            });
+        }
+
+        function saveRenamePlanFromModal(planId) {
+            const inp = document.getElementById('modal-rename-plan-name');
+            const newName = inp ? inp.value.trim() : '';
+            if (!newName) {
+                showToast('Podaj nazwę planu!', 'warning');
+                if (inp) inp.focus();
+                return;
+            }
+            const plan = trainingPlans.find(p => p && p.id === planId);
+            if (!plan) {
+                showToast('Nie znaleziono planu.', 'warning');
+                hideModal();
+                return;
+            }
+            if (newName === plan.name) {
+                hideModal();
+                return;
+            }
+            plan.name = newName;
+            saveTrainingPlans();
+            if (Array.isArray(workoutHistory)) {
+                workoutHistory.forEach((w) => {
+                    if (w && w.planId === planId) w.planName = newName;
+                });
+                saveWorkoutHistory();
+            }
+            if (currentWorkout && currentWorkout.planId === planId) {
+                currentWorkout.planName = newName;
+                saveCurrentWorkout();
+            }
+            hideModal();
+            renderTrainingPlans();
+            highlightEditingPlan();
+            if (currentPlanId === planId) {
+                const titleEl = document.getElementById('plan-editor-title');
+                if (titleEl) titleEl.textContent = newName;
+            }
+            showToast('Nazwa planu została zmieniona.', 'success');
         }
 
         function addNewPlan(planName) {
@@ -5456,6 +6014,9 @@
             });
 
             const savedWorkoutForShare = JSON.parse(JSON.stringify(currentWorkout));
+            const exerciseCountForSummary = Array.isArray(savedWorkoutForShare.exercises)
+                ? savedWorkoutForShare.exercises.length
+                : 0;
             workoutHistory.push(currentWorkout); saveWorkoutHistory();
             currentWorkout = { exercises: [] }; saveCurrentWorkout();
             progressionArmedExerciseIndexes.clear();
@@ -5467,25 +6028,20 @@
             showToast('Trening został zapisany!', 'success');
 
             if (completedSetCount > 0) {
+                if (prCount >= 2) {
+                    try { triggerScreenShakePulse('pr'); } catch (e) { }
+                }
                 try {
                     triggerCelebration({ intensity: prCount > 0 ? 'big' : 'medium' });
                 } catch (e) { }
 
-                const reward = getRandomRewardMessage({ totalVolumeKg, prCount });
-                const shareBtnHtml = `
-                    <button type="button" id="workout-share-after-save-btn" class="btn-success" style="margin-top:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;font-size:0.95rem;border-radius:12px;">
-                        <i class="fas fa-share-nodes" aria-hidden="true"></i>
-                        <span>Udostępnij trening</span>
-                    </button>`;
-                setTimeout(() => {
-                    // avoid overwriting any currently open modal (e.g., user opened something instantly)
-                    const modal = document.getElementById('modal');
-                    if (modal && !modal.classList.contains('hidden')) return;
-                    showModal(reward.title, reward.bodyHtml + shareBtnHtml, () => {
-                        const btn = document.getElementById('workout-share-after-save-btn');
-                        if (btn) btn.addEventListener('click', () => shareWorkoutAsImage(savedWorkoutForShare));
-                    });
-                }, 220);
+                const reward = getRandomRewardMessage({
+                    totalVolumeKg,
+                    prCount,
+                    exerciseCount: exerciseCountForSummary,
+                    completedSetCount
+                });
+                showWorkoutRewardFullscreen(reward, savedWorkoutForShare);
             }
         }
 
@@ -5663,6 +6219,7 @@
             closeQuickWorkoutSheet({ clearEmptySession: false, resetPills: false });
             const sheet = document.getElementById('history-edit-sheet');
             if (!sheet) return;
+            historyEditSheetOpenedAt = Date.now();
             sheet.dataset.workoutId = workoutId;
 
             const titleEl = document.getElementById('history-edit-sheet-title');
@@ -5724,6 +6281,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#history-edit-sheet-backdrop')) {
+                    if (Date.now() - historyEditSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closeHistoryEditSheet();
                     return;
                 }
@@ -6665,14 +7223,10 @@
             }
         }
 
-        function getRandomRewardMessage({ totalVolumeKg = 0, prCount = 0 } = {}) {
+        function getRandomRewardMessage({ totalVolumeKg = 0, prCount = 0, exerciseCount = 0, completedSetCount = 0 } = {}) {
             const comparison = getWeightComparison(totalVolumeKg);
             const volumeTextKg = `${formatWeight(totalVolumeKg)} kg`;
             const volumeTextTons = totalVolumeKg >= 1000 ? `${(totalVolumeKg / 1000).toFixed(1).replace('.', ',')} t` : null;
-
-            const prLine = prCount > 0
-                ? `<div style="margin-top:10px; font-weight:800; color: var(--success);">🏆 Ustanowione PR: ${prCount}</div>`
-                : `<div style="margin-top:10px; font-weight:700; color: var(--text-muted);">Bez PR? Spokojnie — konsekwencja wygrywa.</div>`;
 
             const hooks = [
                 () => `Wow! Dziś zrobiłeś(aś) <strong>${volumeTextKg}</strong> objętości — to jak ${comparison.text} ${comparison.emoji}`,
@@ -6685,13 +7239,32 @@
             ];
 
             const msg = (typeof pick === 'function') ? pick(hooks)() : hooks[Math.floor(Math.random() * hooks.length)]();
+            const exercisesLabel = `${exerciseCount} ${exerciseCount === 1 ? 'ćwiczenie' : (exerciseCount >= 2 && exerciseCount <= 4 ? 'ćwiczenia' : 'ćwiczeń')}`;
+            const setsLabel = `${completedSetCount} ${completedSetCount === 1 ? 'seria' : (completedSetCount >= 2 && completedSetCount <= 4 ? 'serie' : 'serii')}`;
+            const prLabel = prCount > 0 ? `🏆 ${prCount} PR` : '🏆 0 PR';
+            const finalLine = prCount > 0
+                ? 'Nowe rekordy wbite. Jutro tylko pilnuj regeneracji i lecimy dalej.'
+                : 'Bez PR? Spokojnie. Regularność to turbo, które robi wynik długoterminowo.';
 
             const bodyHtml = `
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div style="font-size:1.05rem; font-weight:800;">Trening ukończony</div>
+                <div class="reward-summary" style="display:flex; flex-direction:column; gap:12px;">
                     <div style="font-size:0.95rem; color: var(--text-color); line-height:1.45;">${msg}</div>
-                    ${prLine}
-                    <div style="margin-top:4px; font-size:0.82rem; color: var(--text-muted);">Sprawdź jutro, co wypadnie następnym razem.</div>
+                    <div class="reward-stats-grid" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:2px;">
+                        <div class="reward-stat" style="padding:10px 8px; border-radius:10px; border:1px solid var(--border-color); background:var(--accent-secondary); text-align:center;">
+                            <div style="font-size:0.72rem; color:var(--text-muted);">Ćwiczenia</div>
+                            <div style="font-size:0.95rem; font-weight:800;">${exercisesLabel}</div>
+                        </div>
+                        <div class="reward-stat" style="padding:10px 8px; border-radius:10px; border:1px solid var(--border-color); background:var(--accent-secondary); text-align:center;">
+                            <div style="font-size:0.72rem; color:var(--text-muted);">Serie</div>
+                            <div style="font-size:0.95rem; font-weight:800;">${setsLabel}</div>
+                        </div>
+                        <div class="reward-stat" style="padding:10px 8px; border-radius:10px; border:1px solid var(--border-color); background:var(--accent-secondary); text-align:center;">
+                            <div style="font-size:0.72rem; color:var(--text-muted);">Objętość</div>
+                            <div style="font-size:0.95rem; font-weight:800;">${volumeTextTons || volumeTextKg}</div>
+                        </div>
+                    </div>
+                    <div style="font-size:0.9rem; font-weight:700; color:${prCount > 0 ? 'var(--success)' : 'var(--text-muted)'};">${prLabel}</div>
+                    <div style="margin-top:2px; font-size:0.82rem; color: var(--text-muted); line-height:1.4;">${finalLine}</div>
                 </div>
             `;
             return { title: 'Trening ukończony', bodyHtml };
@@ -7855,9 +8428,17 @@
                             toastMsg += `Maksymalne powtórzenia: ${reps}`;
                         }
                         showToast(toastMsg, 'success', 4000);
+                        playUiSound('ding');
+                    } else {
+                        setBox.classList.remove('set-complete-pop');
+                        void setBox.offsetWidth;
+                        setBox.classList.add('set-complete-pop');
+                        setTimeout(() => setBox.classList.remove('set-complete-pop'), 560);
+                        playUiSound('ding');
                     }
                 } else {
                     // Removing completion - also remove PR indicator
+                    setBox.classList.remove('set-complete-pop');
                     setBox.classList.remove('pr-achieved');
                     const prIndicator = setBox.querySelector('.pr-indicator');
                     if (prIndicator) prIndicator.remove();
