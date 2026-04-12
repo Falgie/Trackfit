@@ -3978,6 +3978,11 @@
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-toggle">
                 <i class="fas fa-adjust" aria-hidden="true"></i> Zmień motyw
             </button>
+            <a href="mailto:gymgymcut@gmail.com?subject=%5BGymCut%5D%20Propozycja%20funkcji&amp;body=Cze%C5%9B%C4%87%2C%0A%0AOpisz%20swoj%C4%85%20propozycj%C4%99%20lub%20zg%C5%82o%C5%9B%20problem.%20Mo%C5%BCesz%20dopisa%C4%87%20urz%C4%85dzenie%20lub%20przegl%C4%85dark%C4%99%3A%0A%0A%E2%80%94%0A%0AAplikacja%3A%20GymCut"
+                id="theme-sheet-feedback-mailto" class="plan-actions-sheet-item" target="_blank"
+                rel="noopener noreferrer">
+                <i class="fas fa-lightbulb" aria-hidden="true"></i> Pomoc i propozycje funkcji
+            </a>
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-ui-sounds-toggle" aria-pressed="false">
                 <i class="fas fa-volume-high" aria-hidden="true"></i> <span id="theme-sheet-ui-sounds-label">Dźwięki interfejsu: wyłączone</span>
             </button>
@@ -3988,7 +3993,7 @@
             <button type="button" class="plan-actions-sheet-item" id="theme-sheet-import-strong-hevy">
                 <i class="fas fa-file-import" aria-hidden="true"></i> Importowanie danych
             </button>
-            <p class="theme-import-hint">Obsługiwane pliki: eksport `.json` oraz `.csv` z aplikacji treningowych.</p>
+            <p class="theme-import-hint">JSON: historia treningów lub plany treningowe (<code>trainingPlans</code>). CSV: wpisy do historii treningów.</p>
             <input type="file" id="strong-hevy-import-input" accept=".json,.csv,application/json,text/csv" hidden>
             <button type="button" class="plan-actions-sheet-cancel" id="theme-sheet-cancel">Anuluj</button>
         </div>
@@ -4662,30 +4667,121 @@
             return valid.length;
         }
 
+        function normalizePlanExerciseForImport(ex) {
+            if (!ex || typeof ex !== 'object') return null;
+            const name = String(ex.name || ex.title || ex.exercise_name || '').trim();
+            if (!name) return null;
+            let sets = parseInt(ex.sets, 10);
+            let reps = parseInt(ex.reps, 10);
+            if (!Number.isFinite(sets) || sets < 1) {
+                if (Array.isArray(ex.sets) && ex.sets.length) sets = ex.sets.length;
+                else if (Array.isArray(ex.entries) && ex.entries.length) sets = ex.entries.length;
+                else if (Array.isArray(ex.logs) && ex.logs.length) sets = ex.logs.length;
+                else sets = 3;
+            }
+            if (sets > 200) sets = 200;
+            if (!Number.isFinite(reps) || reps < 1) {
+                const tr = ex.targetReps ?? ex.target_reps ?? ex.repetitions;
+                const trn = parseInt(tr, 10);
+                reps = Number.isFinite(trn) && trn > 0 ? trn : 10;
+            }
+            if (reps > 999) reps = 999;
+            const notes = String(ex.notes || ex.note || '').trim();
+            const progression = ex.progression === true;
+            return { name, sets, reps, notes, progression };
+        }
+
+        function normalizeTrainingPlanForImport(raw) {
+            if (!raw || typeof raw !== 'object') return null;
+            const name = String(raw.name || raw.title || '').trim() || 'Importowany plan';
+            let exercisesRaw = raw.exercises;
+            if (!Array.isArray(exercisesRaw)) exercisesRaw = [];
+            const exercises = exercisesRaw.map(normalizePlanExerciseForImport).filter(Boolean);
+            if (!exercises.length) return null;
+            return { id: crypto.randomUUID(), name, exercises };
+        }
+
+        function parseTrainingPlansFromPayload(payload) {
+            if (!payload || typeof payload !== 'object') return [];
+            let rawPlans = [];
+            if (Array.isArray(payload.trainingPlans)) rawPlans = payload.trainingPlans;
+            else if (Array.isArray(payload.plans)) rawPlans = payload.plans;
+            else if (Array.isArray(payload.routines)) rawPlans = payload.routines;
+            else if (payload.plan && typeof payload.plan === 'object' && Array.isArray(payload.plan.exercises)) rawPlans = [payload.plan];
+            else if (Array.isArray(payload.data?.trainingPlans)) rawPlans = payload.data.trainingPlans;
+            else if (Array.isArray(payload.data?.plans)) rawPlans = payload.data.plans;
+            else if (Array.isArray(payload.data?.routines)) rawPlans = payload.data.routines;
+            else if (Array.isArray(payload) && payload.length > 0) {
+                const anyWorkoutCue = payload.some((p) => p && typeof p === 'object' && (p.date || p.started_at || p.start_time));
+                const allPlanLike = payload.every((p) => p && typeof p === 'object' && Array.isArray(p.exercises) && (p.name || p.title));
+                if (!anyWorkoutCue && allPlanLike) rawPlans = payload;
+            }
+            return rawPlans.map(normalizeTrainingPlanForImport).filter(Boolean);
+        }
+
+        function mergeImportedTrainingPlans(importedPlans) {
+            if (!Array.isArray(importedPlans) || importedPlans.length === 0) return 0;
+            if (!Array.isArray(trainingPlans)) trainingPlans = [];
+            const valid = importedPlans.filter((p) => p && p.id && p.name && Array.isArray(p.exercises) && p.exercises.length > 0);
+            if (!valid.length) return 0;
+            trainingPlans = trainingPlans.concat(valid);
+            saveTrainingPlans();
+            renderTrainingPlans();
+            updateStats();
+            return valid.length;
+        }
+
+        function formatImportedPlansPhrase(n) {
+            if (n === 1) return '1 plan treningowy';
+            if (n >= 2 && n <= 4) return `${n} plany treningowe`;
+            return `${n} planów treningowych`;
+        }
+
+        function formatImportedWorkoutsPhrase(n) {
+            if (n === 1) return '1 trening';
+            if (n >= 2 && n <= 4) return `${n} treningi`;
+            return `${n} treningów`;
+        }
+
         async function handleStrongHevyImportFile(event) {
             const file = event.target?.files?.[0];
             if (!file) return;
             try {
                 const text = await file.text();
-                let imported = [];
                 const lowerName = file.name.toLowerCase();
 
                 if (lowerName.endsWith('.json')) {
                     const payload = JSON.parse(text);
-                    imported = parseStrongHevyJsonPayload(payload);
+                    const planCount = mergeImportedTrainingPlans(parseTrainingPlansFromPayload(payload));
+                    const workoutCount = mergeImportedWorkouts(parseStrongHevyJsonPayload(payload));
+                    if (planCount > 0 || workoutCount > 0) {
+                        closeThemeSettingsSheet();
+                        if (planCount > 0 && workoutCount > 0) {
+                            showToast(
+                                `Zaimportowano ${formatImportedPlansPhrase(planCount)} oraz ${formatImportedWorkoutsPhrase(workoutCount)} do historii.`,
+                                'success',
+                                4500
+                            );
+                        } else if (planCount > 0) {
+                            showToast(`Zaimportowano ${formatImportedPlansPhrase(planCount)}.`, 'success', 4500);
+                        } else {
+                            showToast(`Zaimportowano ${workoutCount} treningów z pliku.`, 'success', 4500);
+                        }
+                    } else {
+                        showToast('Nie znaleziono planów ani treningów do importu w tym pliku.', 'warning');
+                    }
                 } else if (lowerName.endsWith('.csv')) {
-                    imported = parseStrongHevyCsvPayload(text);
+                    const imported = parseStrongHevyCsvPayload(text);
+                    const mergedCount = mergeImportedWorkouts(imported);
+                    if (mergedCount > 0) {
+                        closeThemeSettingsSheet();
+                        showToast(`Zaimportowano ${mergedCount} treningów z pliku.`, 'success', 4500);
+                    } else {
+                        showToast('Nie znaleziono treningów do importu w tym pliku.', 'warning');
+                    }
                 } else {
                     showToast('Nieobsługiwany format pliku. Użyj .json lub .csv.', 'warning');
                     return;
-                }
-
-                const mergedCount = mergeImportedWorkouts(imported);
-                if (mergedCount > 0) {
-                    closeThemeSettingsSheet();
-                    showToast(`Zaimportowano ${mergedCount} treningów z pliku.`, 'success', 4500);
-                } else {
-                    showToast('Nie znaleziono treningów do importu w tym pliku.', 'warning');
                 }
             } catch (error) {
                 console.error('Import Strong/Hevy failed:', error);
@@ -7063,6 +7159,121 @@
             return rows;
         }
 
+        function workoutShareRoundPath(ctx, x, y, w, h, r) {
+            const rr = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + rr, y);
+            ctx.lineTo(x + w - rr, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+            ctx.lineTo(x + w, y + h - rr);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+            ctx.lineTo(x + rr, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+            ctx.lineTo(x, y + rr);
+            ctx.quadraticCurveTo(x, y, x + rr, y);
+            ctx.closePath();
+        }
+
+        function workoutShareFillRoundRect(ctx, x, y, w, h, r) {
+            if (typeof ctx.roundRect === 'function') {
+                ctx.beginPath();
+                ctx.roundRect(x, y, w, h, r);
+                ctx.fill();
+                return;
+            }
+            workoutShareRoundPath(ctx, x, y, w, h, r);
+            ctx.fill();
+        }
+
+        function workoutShareStrokeRoundRect(ctx, x, y, w, h, r) {
+            if (typeof ctx.roundRect === 'function') {
+                ctx.beginPath();
+                ctx.roundRect(x, y, w, h, r);
+                ctx.stroke();
+                return;
+            }
+            workoutShareRoundPath(ctx, x, y, w, h, r);
+            ctx.stroke();
+        }
+
+        function drawWorkoutShareBackground(ctx, W, H) {
+            const base = ctx.createLinearGradient(0, 0, W, H * 1.08);
+            base.addColorStop(0, '#13131c');
+            base.addColorStop(0.42, '#0b0b12');
+            base.addColorStop(1, '#06060c');
+            ctx.fillStyle = base;
+            ctx.fillRect(0, 0, W, H);
+
+            const blobs = [
+                { cx: 120, cy: 200, r: 380, c: 'rgba(92, 149, 255, 0.2)' },
+                { cx: W - 80, cy: 420, r: 440, c: 'rgba(100, 160, 255, 0.12)' },
+                { cx: W * 0.55, cy: H * 0.72, r: 500, c: 'rgba(70, 120, 220, 0.1)' },
+            ];
+            blobs.forEach((b) => {
+                const rg = ctx.createRadialGradient(b.cx, b.cy, 0, b.cx, b.cy, b.r);
+                rg.addColorStop(0, b.c);
+                rg.addColorStop(0.55, 'rgba(92, 149, 255, 0.03)');
+                rg.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = rg;
+                ctx.fillRect(0, 0, W, H);
+            });
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
+            for (let gx = 0; gx < W; gx += 30) {
+                for (let gy = 0; gy < H; gy += 30) {
+                    ctx.beginPath();
+                    ctx.arc(gx + (gy / 30 % 2) * 15, gy, 1.1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            const topBar = ctx.createLinearGradient(0, 0, W, 0);
+            topBar.addColorStop(0, '#3b74e8');
+            topBar.addColorStop(0.45, '#5C95FF');
+            topBar.addColorStop(1, '#8eb8ff');
+            ctx.save();
+            ctx.shadowColor = 'rgba(92, 149, 255, 0.45)';
+            ctx.shadowBlur = 28;
+            ctx.shadowOffsetY = 0;
+            ctx.fillStyle = topBar;
+            ctx.fillRect(0, 0, W, 9);
+            ctx.restore();
+        }
+
+        function drawWorkoutShareExerciseRow(ctx, W, y, row, maxInList, nameColW) {
+            const pad = 56;
+            const kgStr = `${formatWeight(row.maxW)} kg`;
+            ctx.textBaseline = 'top';
+            ctx.textAlign = 'left';
+            ctx.font = '24px Inter, system-ui, sans-serif';
+            ctx.fillStyle = '#E4E7EC';
+            const nameText = truncateCanvasText(ctx, row.name, nameColW);
+            ctx.fillText(nameText, pad, y + 4);
+
+            ctx.font = 'bold 24px Inter, system-ui, sans-serif';
+            ctx.fillStyle = '#7eb4ff';
+            const kgW = ctx.measureText(kgStr).width;
+            const kgX = W - pad - kgW;
+            ctx.fillText(kgStr, kgX, y + 4);
+
+            const trackX = pad + nameColW + 18;
+            const trackW = Math.max(40, kgX - trackX - 18);
+            const trackY = y + 26;
+            const trackH = 10;
+            const rad = 5;
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+            workoutShareFillRoundRect(ctx, trackX, trackY, trackW, trackH, rad);
+
+            const ratio = maxInList > 0 ? row.maxW / maxInList : 0;
+            const fillW = Math.max(trackH, Math.round(trackW * ratio));
+            const barGrad = ctx.createLinearGradient(trackX, 0, trackX + fillW, 0);
+            barGrad.addColorStop(0, '#4a86e8');
+            barGrad.addColorStop(1, '#5C95FF');
+            ctx.fillStyle = barGrad;
+            workoutShareFillRoundRect(ctx, trackX, trackY, fillW, trackH, rad);
+        }
+
         function generateWorkoutSharePngBlob(workout) {
             return new Promise((resolve, reject) => {
                 const done = () => {
@@ -7077,36 +7288,42 @@
                         return;
                     }
 
-                    const g = ctx.createLinearGradient(0, 0, W, H);
-                    g.addColorStop(0, '#14141c');
-                    g.addColorStop(1, '#0a0a0f');
-                    ctx.fillStyle = g;
-                    ctx.fillRect(0, 0, W, H);
+                    drawWorkoutShareBackground(ctx, W, H);
 
-                    ctx.fillStyle = '#5C95FF';
-                    ctx.fillRect(0, 0, W, 10);
-
-                    let y = 100;
+                    let y = 56;
                     ctx.textBaseline = 'top';
-                    ctx.fillStyle = '#E9ECEF';
-                    ctx.font = 'italic 900 72px Poppins, Inter, system-ui, sans-serif';
-                    ctx.fillText('GYMCUT', 64, y);
-                    y += 96;
+                    ctx.textAlign = 'left';
 
-                    ctx.fillStyle = '#8B949E';
-                    ctx.font = '28px Inter, system-ui, sans-serif';
+                    ctx.fillStyle = '#F1F5F9';
+                    ctx.font = 'italic 900 68px Poppins, Inter, system-ui, sans-serif';
+                    ctx.fillText('GYMCUT', 56, y);
+                    y += 84;
+
                     const d = workout.date ? new Date(workout.date) : new Date();
                     const dateStr = d.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                    ctx.fillText(truncateCanvasText(ctx, dateStr, W - 128), 64, y);
-                    y += 52;
+                    ctx.font = '24px Inter, system-ui, sans-serif';
+                    const capPadX = 22;
+                    const capPadY = 12;
+                    const capText = truncateCanvasText(ctx, dateStr, W - 200);
+                    const capW = ctx.measureText(capText).width + capPadX * 2;
+                    const capH = 44;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+                    workoutShareFillRoundRect(ctx, 56, y, capW, capH, capH / 2);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+                    ctx.lineWidth = 1;
+                    workoutShareStrokeRoundRect(ctx, 56, y, capW, capH, capH / 2);
+                    ctx.fillStyle = '#B8C5D9';
+                    ctx.fillText(capText, 56 + capPadX, y + capPadY + 1);
+                    y += capH + 28;
 
                     ctx.fillStyle = '#5C95FF';
-                    ctx.font = 'bold 34px Inter, system-ui, sans-serif';
+                    ctx.font = 'bold 36px Inter, system-ui, sans-serif';
                     const planTitle = workout.planName || 'Szybki trening';
-                    ctx.fillText(truncateCanvasText(ctx, planTitle, W - 128), 64, y);
-                    y += 100;
+                    ctx.fillText(truncateCanvasText(ctx, planTitle, W - 112), 56, y);
+                    y += 52;
 
                     const maxWeight = calcWorkoutMaxWeight(workout);
+                    const totalVol = calcWorkoutTotalVolume(workout);
                     const prs = countWorkoutPRs(workout);
                     const exN = Array.isArray(workout.exercises) ? workout.exercises.length : 0;
                     let completedSets = 0;
@@ -7116,67 +7333,104 @@
                         });
                     }
 
+                    const cardX = 56;
+                    const cardW = W - 112;
+                    const cardY = y;
+                    const cardH = 248;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.055)';
+                    workoutShareFillRoundRect(ctx, cardX, cardY, cardW, cardH, 22);
+                    ctx.strokeStyle = 'rgba(92, 149, 255, 0.35)';
+                    ctx.lineWidth = 1.5;
+                    workoutShareStrokeRoundRect(ctx, cardX, cardY, cardW, cardH, 22);
+
+                    const innerX = cardX + 36;
+                    let cy = cardY + 32;
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = '22px Inter, system-ui, sans-serif';
+                    ctx.fillText('Największy ciężar w treningu', innerX, cy);
+                    cy += 40;
+
                     ctx.fillStyle = '#FFFFFF';
-                    ctx.font = 'bold 80px Poppins, Inter, system-ui, sans-serif';
-                    ctx.fillText(`${formatWeight(maxWeight)} kg`, 64, y);
-                    y += 96;
-                    ctx.fillStyle = '#8B949E';
-                    ctx.font = '26px Inter, system-ui, sans-serif';
-                    ctx.fillText('Największy ciężar w treningu', 64, y);
-                    y += 72;
+                    ctx.font = 'bold 88px Poppins, Inter, system-ui, sans-serif';
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(92, 149, 255, 0.35)';
+                    ctx.shadowBlur = 18;
+                    ctx.fillText(`${formatWeight(maxWeight)} kg`, innerX, cy);
+                    ctx.restore();
+                    cy += 100;
+
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.font = '28px Inter, system-ui, sans-serif';
+                    const volLine = totalVol > 0
+                        ? `Objętość · ${formatWeight(totalVol)} kg`
+                        : 'Objętość · brak danych (ciężar × powtórzenia)';
+                    ctx.fillText(truncateCanvasText(ctx, volLine, cardW - 72), innerX, cy);
+
+                    y = cardY + cardH + 36;
 
                     const chipY = y;
-                    const chipW = 312;
-                    const chipH = 76;
                     const chipGap = 14;
-                    let cx = 64;
-                    const fillChip = (x0, w0) => {
-                        ctx.fillStyle = 'rgba(92, 149, 255, 0.12)';
-                        if (typeof ctx.roundRect === 'function') {
-                            ctx.beginPath();
-                            ctx.roundRect(x0, chipY, w0, chipH, 14);
-                            ctx.fill();
-                        } else {
-                            ctx.fillRect(x0, chipY, w0, chipH);
-                        }
-                    };
-                    const drawChip = (label, value, w0) => {
-                        fillChip(cx, w0);
-                        ctx.fillStyle = '#B8C5D9';
-                        ctx.font = '22px Inter, system-ui, sans-serif';
-                        ctx.fillText(label, cx + 18, chipY + 14);
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.font = 'bold 28px Inter, system-ui, sans-serif';
-                        ctx.fillText(value, cx + 18, chipY + 42);
-                        cx += w0 + chipGap;
-                    };
-                    drawChip('PR w sesji', String(prs), chipW);
-                    drawChip('Ćwiczenia', String(exN), chipW);
-                    drawChip('Serie ukończone', String(completedSets), chipW);
-                    y = chipY + 110;
+                    const chipW = (W - 112 - chipGap * 2) / 3;
+                    const chipH = 96;
+                    let cx = 56;
+                    const drawChip = (label, value) => {
+                        ctx.fillStyle = 'rgba(15, 20, 35, 0.55)';
+                        workoutShareFillRoundRect(ctx, cx, chipY, chipW, chipH, 18);
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        ctx.lineWidth = 1;
+                        workoutShareStrokeRoundRect(ctx, cx, chipY, chipW, chipH, 18);
+                        const accentGrad = ctx.createLinearGradient(cx, chipY, cx, chipY + 4);
+                        accentGrad.addColorStop(0, '#5C95FF');
+                        accentGrad.addColorStop(1, 'rgba(92, 149, 255, 0)');
+                        ctx.fillStyle = accentGrad;
+                        ctx.fillRect(cx + 14, chipY + 10, chipW - 28, 4);
 
-                    ctx.fillStyle = '#6B7280';
+                        ctx.fillStyle = '#9CA3AF';
+                        ctx.font = '20px Inter, system-ui, sans-serif';
+                        ctx.fillText(label, cx + 20, chipY + 22);
+                        ctx.fillStyle = '#F8FAFC';
+                        ctx.font = 'bold 32px Inter, system-ui, sans-serif';
+                        ctx.fillText(value, cx + 20, chipY + 52);
+                        cx += chipW + chipGap;
+                    };
+                    drawChip('PR w sesji', String(prs));
+                    drawChip('Ćwiczenia', String(exN));
+                    drawChip('Serie ukończone', String(completedSets));
+                    y = chipY + chipH + 40;
+
+                    ctx.fillStyle = '#64748b';
                     ctx.font = 'bold 22px Inter, system-ui, sans-serif';
-                    ctx.fillText('TOP ĆWICZENIA (największy ciężar)', 64, y);
-                    y += 44;
+                    ctx.fillText('TOP ĆWICZENIA (największy ciężar)', 56, y);
+                    y += 40;
 
                     const exRows = getExerciseMaxWeightsForShare(workout).filter(r => r.maxW > 0).slice(0, 8);
-                    ctx.font = '26px Inter, system-ui, sans-serif';
+                    const maxInList = exRows.length ? exRows[0].maxW : 1;
+                    const nameColW = 340;
+                    const rowH = 58;
                     if (exRows.length === 0) {
+                        ctx.font = '24px Inter, system-ui, sans-serif';
                         ctx.fillStyle = '#8B949E';
-                        ctx.fillText('Brak zapisanego ciężaru (uzupełnij ciężar serii).', 64, y);
+                        ctx.fillText('Brak zapisanego ciężaru (uzupełnij ciężar serii).', 56, y);
+                        y += 44;
                     } else {
                         exRows.forEach((row) => {
-                            ctx.fillStyle = '#E9ECEF';
-                            const left = truncateCanvasText(ctx, row.name, W - 280);
-                            ctx.fillText(left, 64, y);
-                            ctx.fillStyle = '#5C95FF';
-                            ctx.font = 'bold 26px Inter, system-ui, sans-serif';
-                            ctx.fillText(`${formatWeight(row.maxW)} kg`, W - 64 - ctx.measureText(`${formatWeight(row.maxW)} kg`).width, y);
-                            ctx.font = '26px Inter, system-ui, sans-serif';
-                            y += 48;
+                            drawWorkoutShareExerciseRow(ctx, W, y, row, maxInList, nameColW);
+                            y += rowH;
                         });
                     }
+
+                    const footerY = H - 96;
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(56, footerY);
+                    ctx.lineTo(W - 56, footerY);
+                    ctx.stroke();
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '22px Inter, system-ui, sans-serif';
+                    ctx.fillText('GYMCUT · Twój trening, Twój rytm', W / 2, footerY + 28);
+                    ctx.textAlign = 'left';
 
                     canvas.toBlob((blob) => {
                         if (blob) resolve(blob);
