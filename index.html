@@ -594,6 +594,186 @@
             margin-top: 0;
         }
 
+        /* What's New (po aktualizacji) */
+        .whats-new-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 4900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+            background: radial-gradient(120% 80% at 50% 15%, rgba(92, 149, 255, 0.22), transparent 55%),
+                linear-gradient(165deg, var(--card-bg) 0%, var(--bg-color) 45%, var(--card-bg) 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .whats-new-overlay.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .whats-new-overlay.hidden {
+            display: none !important;
+        }
+
+        .whats-new-panel {
+            width: 100%;
+            max-width: 460px;
+            max-height: min(92vh, 760px);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 22px 22px 18px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+            transform: translateY(12px) scale(0.98);
+            opacity: 0;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        .whats-new-overlay.is-open .whats-new-panel {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .whats-new-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .whats-new-title {
+            font-family: "Poppins", sans-serif;
+            font-size: clamp(1.25rem, 4.5vw, 1.6rem);
+            font-weight: 900;
+            color: var(--text-color);
+            line-height: 1.2;
+            margin: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .whats-new-version-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(92, 149, 255, 0.16);
+            color: var(--accent-color);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .whats-new-subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .whats-new-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .whats-new-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .whats-new-list li i {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(92, 149, 255, 0.16);
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .whats-new-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .whats-new-actions .btn-success {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        body.whats-new-open {
+            overflow: hidden;
+        }
+
+        /* Wiersz wersji w sekcji Opcje */
+        .settings-version-row {
+            width: 100%;
+            margin-top: 6px;
+            margin-bottom: 0;
+            min-height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 14px;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px dashed var(--border-color);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        .settings-version-row i {
+            color: var(--accent-color);
+            font-size: 0.95rem;
+        }
+
+        .settings-version-row .settings-version-label {
+            flex: 1;
+            text-align: left;
+        }
+
+        .settings-version-row .settings-version-value {
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: 0.02em;
+        }
+
         @media (prefers-reduced-motion: reduce) {
 
             .tab-content.tab-enter-from-right,
@@ -3996,6 +4176,11 @@
             <p class="theme-import-hint">JSON: historia treningów lub plany treningowe (<code>trainingPlans</code>). CSV: wpisy do historii treningów.</p>
             <input type="file" id="strong-hevy-import-input" accept=".json,.csv,application/json,text/csv" hidden>
             <button type="button" class="plan-actions-sheet-cancel" id="theme-sheet-cancel">Anuluj</button>
+            <button type="button" class="settings-version-row" id="theme-sheet-version" aria-label="Pokaż co nowego w tej wersji">
+                <i class="fas fa-circle-info" aria-hidden="true"></i>
+                <span class="settings-version-label">Wersja</span>
+                <span class="settings-version-value" id="theme-sheet-version-value">1.0.0</span>
+            </button>
         </div>
     </div>
 
@@ -4041,6 +4226,23 @@
                     <i class="fas fa-share-nodes" aria-hidden="true"></i> Udostępnij trening
                 </button>
                 <button type="button" class="btn-secondary" id="workout-reward-continue">Gotowe</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="whats-new-overlay" class="whats-new-overlay hidden" role="dialog" aria-modal="true"
+        aria-labelledby="whats-new-title" aria-hidden="true">
+        <div class="whats-new-panel">
+            <div class="whats-new-header">
+                <h2 id="whats-new-title" class="whats-new-title">Witaj w GymCut!</h2>
+                <span class="whats-new-version-badge" id="whats-new-version-badge">v1.0.0</span>
+            </div>
+            <p class="whats-new-subtitle" id="whats-new-subtitle"></p>
+            <ul class="whats-new-list" id="whats-new-list"></ul>
+            <div class="whats-new-actions">
+                <button type="button" class="btn-success" id="whats-new-close-btn">
+                    <i class="fas fa-check" aria-hidden="true"></i> Zrozumiałem
+                </button>
             </div>
         </div>
     </div>
@@ -4475,6 +4677,8 @@
         function initThemeSettingsSheet() {
             const sheet = document.getElementById('theme-settings-sheet');
             if (!sheet) return;
+            const versionValueEl = document.getElementById('theme-sheet-version-value');
+            if (versionValueEl) versionValueEl.textContent = APP_VERSION;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#theme-settings-sheet-backdrop')) {
                     if (Date.now() - themeSettingsSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
@@ -4502,6 +4706,12 @@
                 }
                 if (t.id === 'theme-sheet-import-strong-hevy') {
                     triggerStrongHevyImport();
+                    return;
+                }
+                if (t.id === 'theme-sheet-version') {
+                    closeThemeSettingsSheet();
+                    setTimeout(() => showWhatsNew(APP_VERSION), 220);
+                    return;
                 }
             });
         }
@@ -5168,6 +5378,23 @@
         const TAB_SWITCH_DELAY_MS = 120;
         /** Ignoruj klik w backdrop zaraz po otwarciu (syntetyczny „ghost click” po touchend). */
         const PLAN_SHEET_BACKDROP_SUPPRESS_MS = 550;
+        /** Aktualna wersja aplikacji oraz changelog pokazywany w ekranie „Co nowego”. */
+        const APP_VERSION = '1.0.0';
+        const WHATS_NEW = {
+            '1.0.0': {
+                title: 'Witaj w GymCut!',
+                subtitle: 'Twój trening, Twój rytm. Oto co możesz robić w aplikacji:',
+                items: [
+                    { icon: 'fa-dumbbell', text: 'Twórz plany treningowe i prowadź sesje krok po kroku.' },
+                    { icon: 'fa-stopwatch', text: 'Pływający timer odpoczynku z dźwiękami po każdej serii.' },
+                    { icon: 'fa-chart-line', text: 'Historia treningów oraz podsumowania miesiąca i roku.' },
+                    { icon: 'fa-bolt', text: 'Szybki trening – jedno tapnięcie i zaczynasz ćwiczyć.' },
+                    { icon: 'fa-palette', text: 'Jasny i ciemny motyw oraz dźwięki interfejsu.' },
+                    { icon: 'fa-file-import', text: 'Importowanie danych z plików JSON i CSV (Strong / Hevy).' }
+                ]
+            }
+        };
+        let whatsNewPendingCallback = null;
         let tabSwitchTimeout = null;
         let historyActionsSheetOpenedAt = 0;
         let planActionsSheetOpenedAt = 0;
@@ -5234,8 +5461,11 @@
                 if (currentWorkout.exercises && currentWorkout.exercises.length > 0) {
                     enterFocusMode();
                 }
-                // Show review popup if not dismissed recently
-                setTimeout(() => tryShowReviewPopup(), 600);
+                // Najpierw ekran „Co nowego”, potem podsumowania (jeśli ekranu nie pokazano).
+                setTimeout(() => {
+                    const shown = tryShowWhatsNew(() => tryShowReviewPopup());
+                    if (!shown) tryShowReviewPopup();
+                }, 600);
             }, 1000);
             // --- KONIEC KODU ANIMACJI ---
         }
@@ -5284,6 +5514,7 @@
             initThemeSettingsSheet();
             initQuickWorkoutSheet();
             initHistoryEditSheet();
+            initWhatsNew();
 
             document.getElementById('add-quick-workout-exercise-btn').addEventListener('click', addQuickWorkoutExercise);
 
@@ -7768,6 +7999,89 @@
         let popupCardIndex = 0;
         let popupCardCount = 0;
         let popupTouchStartX = 0;
+
+        function tryShowWhatsNew(onClosed) {
+            const seen = loadData('lastSeenVersion');
+            if (seen === APP_VERSION) return false;
+            showWhatsNew(APP_VERSION, onClosed);
+            return true;
+        }
+
+        function showWhatsNew(version, onClosed) {
+            const overlay = document.getElementById('whats-new-overlay');
+            if (!overlay) return;
+            const data = WHATS_NEW[version] || WHATS_NEW[APP_VERSION];
+            if (!data) return;
+
+            const titleEl = document.getElementById('whats-new-title');
+            const subtitleEl = document.getElementById('whats-new-subtitle');
+            const badgeEl = document.getElementById('whats-new-version-badge');
+            const listEl = document.getElementById('whats-new-list');
+
+            if (titleEl) titleEl.textContent = data.title || 'Co nowego';
+            if (subtitleEl) {
+                if (data.subtitle) {
+                    subtitleEl.textContent = data.subtitle;
+                    subtitleEl.style.display = '';
+                } else {
+                    subtitleEl.textContent = '';
+                    subtitleEl.style.display = 'none';
+                }
+            }
+            if (badgeEl) badgeEl.textContent = 'v' + (version || APP_VERSION);
+            if (listEl) {
+                listEl.innerHTML = '';
+                (data.items || []).forEach(item => {
+                    const li = document.createElement('li');
+                    const i = document.createElement('i');
+                    i.className = 'fas ' + (item.icon || 'fa-circle-check');
+                    i.setAttribute('aria-hidden', 'true');
+                    const span = document.createElement('span');
+                    span.textContent = item.text || '';
+                    li.appendChild(i);
+                    li.appendChild(span);
+                    listEl.appendChild(li);
+                });
+            }
+
+            whatsNewPendingCallback = typeof onClosed === 'function' ? onClosed : null;
+
+            overlay.classList.remove('hidden');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('whats-new-open');
+            requestAnimationFrame(() => overlay.classList.add('is-open'));
+        }
+
+        function closeWhatsNew() {
+            const overlay = document.getElementById('whats-new-overlay');
+            if (!overlay) return;
+            overlay.classList.remove('is-open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('whats-new-open');
+            saveData('lastSeenVersion', APP_VERSION);
+            const cb = whatsNewPendingCallback;
+            whatsNewPendingCallback = null;
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                if (typeof cb === 'function') {
+                    try { cb(); } catch (e) { console.error(e); }
+                }
+            }, 320);
+        }
+
+        function initWhatsNew() {
+            const overlay = document.getElementById('whats-new-overlay');
+            if (!overlay) return;
+            const closeBtn = document.getElementById('whats-new-close-btn');
+            if (closeBtn) closeBtn.addEventListener('click', closeWhatsNew);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeWhatsNew();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                if (overlay.classList.contains('is-open')) closeWhatsNew();
+            });
+        }
 
         function tryShowReviewPopup() {
             // Only show if there's any workout history
