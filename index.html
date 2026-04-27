@@ -402,6 +402,103 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
+        /* Pasek powrotu do trwającego treningu */
+        .workout-resume-bar {
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 10px);
+            z-index: 110;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            min-height: 56px;
+            border-radius: 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+            color: var(--text-color);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            text-align: left;
+            transform: translateY(0);
+            opacity: 1;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            touch-action: manipulation;
+        }
+
+        .workout-resume-bar.hidden {
+            display: none !important;
+        }
+
+        .focus-mode-active .workout-resume-bar,
+        body:has(.workout-reward-fullscreen.is-open) .workout-resume-bar,
+        body:has(.whats-new-overlay.is-open) .workout-resume-bar,
+        body.whats-new-open .workout-resume-bar {
+            display: none !important;
+        }
+
+        .workout-resume-bar-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(92, 149, 255, 0.16);
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+
+        .workout-resume-bar-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .workout-resume-bar-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+
+        .workout-resume-bar-subtitle {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color);
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .workout-resume-bar-cta {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-color);
+            color: #ffffff;
+            font-size: 0.85rem;
+        }
+
+        .workout-resume-bar:active {
+            transform: translateY(1px);
+            opacity: 0.92;
+        }
+
         .nav-item {
             flex: 1;
             display: flex;
@@ -4041,6 +4138,11 @@
                 <div id="focus-header">
                     <h3 id="focus-exercise-title"></h3>
                     <div style="display: flex; gap: 10px; align-items: center;">
+                        <button id="focus-minimize-btn" class="btn-secondary"
+                            title="Zostaw trening na później" aria-label="Minimalizuj trening"
+                            style="width: 40px; height: 40px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
                         <button id="focus-progression-toggle"
                             title="Oznacz progresję na następny trening">📈</button>
                         <button id="focus-add-exercise-btn" class="btn-info"
@@ -4077,6 +4179,16 @@
                 </div>
             </div>
         </div>
+
+        <button id="workout-resume-bar" class="workout-resume-bar hidden" type="button"
+            aria-label="Wróć do treningu" hidden>
+            <span class="workout-resume-bar-icon"><i class="fas fa-dumbbell" aria-hidden="true"></i></span>
+            <span class="workout-resume-bar-text">
+                <span class="workout-resume-bar-title">Trening w toku</span>
+                <span class="workout-resume-bar-subtitle" id="workout-resume-bar-subtitle">Wróć do treningu</span>
+            </span>
+            <span class="workout-resume-bar-cta"><i class="fas fa-arrow-up" aria-hidden="true"></i></span>
+        </button>
 
         <nav class="bottom-nav">
             <div class="nav-item active" data-tab="training-plans">
@@ -5461,6 +5573,7 @@
                 if (currentWorkout.exercises && currentWorkout.exercises.length > 0) {
                     enterFocusMode();
                 }
+                updateWorkoutResumeBar();
                 // Najpierw ekran „Co nowego”, potem podsumowania (jeśli ekranu nie pokazano).
                 setTimeout(() => {
                     const shown = tryShowWhatsNew(() => tryShowReviewPopup());
@@ -5525,6 +5638,14 @@
 
             // Tryb Skupienia (Focus Mode)
             document.getElementById('focus-end-btn').addEventListener('click', saveWorkout);
+            const focusMinimizeBtn = document.getElementById('focus-minimize-btn');
+            if (focusMinimizeBtn) {
+                focusMinimizeBtn.addEventListener('click', () => { exitFocusMode(); });
+            }
+            const workoutResumeBar = document.getElementById('workout-resume-bar');
+            if (workoutResumeBar) {
+                workoutResumeBar.addEventListener('click', (e) => { e.stopPropagation(); enterFocusMode(); });
+            }
             document.getElementById('focus-nav-prev').addEventListener('click', navigateFocusExercise.bind(null, -1));
             document.getElementById('focus-nav-next').addEventListener('click', navigateFocusExercise.bind(null, 1));
             document.getElementById('focus-content').addEventListener('click', handleFocusModeClicks);
@@ -8624,6 +8745,31 @@
 
         // --- Funkcje Trybu Skupienia ---
 
+        function getActiveWorkoutLabel() {
+            if (!currentWorkout || !Array.isArray(currentWorkout.exercises) || !currentWorkout.exercises.length) return '';
+            const idx = Math.min(Math.max(currentFocusExerciseIndex || 0, 0), currentWorkout.exercises.length - 1);
+            const ex = currentWorkout.exercises[idx];
+            const name = ex && ex.name ? ex.name : 'Ćwiczenie';
+            return currentWorkout.planName ? `${currentWorkout.planName} – ${name}` : name;
+        }
+
+        function updateWorkoutResumeBar() {
+            const bar = document.getElementById('workout-resume-bar');
+            if (!bar) return;
+            const appBody = document.querySelector('.app-body');
+            const focusActive = !!(appBody && appBody.classList.contains('focus-mode-active'));
+            const hasWorkout = !!(currentWorkout && Array.isArray(currentWorkout.exercises) && currentWorkout.exercises.length > 0);
+            if (hasWorkout && !focusActive) {
+                const sub = document.getElementById('workout-resume-bar-subtitle');
+                if (sub) sub.textContent = getActiveWorkoutLabel() || 'Wróć do treningu';
+                bar.classList.remove('hidden');
+                bar.removeAttribute('hidden');
+            } else {
+                bar.classList.add('hidden');
+                bar.setAttribute('hidden', '');
+            }
+        }
+
         function enterFocusMode() {
             if (currentWorkout.exercises.length === 0) return showToast('Brak ćwiczeń w treningu', 'warning');
 
@@ -8640,6 +8786,7 @@
             }
             renderFocusExercise(currentFocusExerciseIndex);
             showPill();
+            updateWorkoutResumeBar();
         }
 
         function exitFocusMode() {
@@ -8650,6 +8797,7 @@
             }
             document.querySelector('.app-body').classList.remove('focus-mode-active');
             hidePill();
+            updateWorkoutResumeBar();
         }
 
         function navigateFocusExercise(direction) {
