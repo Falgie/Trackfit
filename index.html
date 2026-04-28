@@ -3329,7 +3329,7 @@
             z-index: 999;
             padding: 0;
             margin-top: 0;
-            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out, bottom 0.25s ease-out;
         }
 
         .fab:active {
@@ -3341,6 +3341,10 @@
             transform: scale(0);
             opacity: 0;
             pointer-events: none;
+        }
+
+        body:has(#workout-resume-bar:not(.hidden)) .fab {
+            bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 86px);
         }
 
         /* Strona Edytora Planu (Master-Detail) */
