@@ -8853,7 +8853,7 @@
             if (currentFocusExerciseIndex >= currentWorkout.exercises.length) {
                 currentFocusExerciseIndex = 0;
             }
-            renderFocusExercise(currentFocusExerciseIndex);
+            renderFocusExercise(currentFocusExerciseIndex, true);
             showPill();
             updateWorkoutResumeBar();
         }
@@ -8871,10 +8871,10 @@
 
         function navigateFocusExercise(direction) {
             const newIndex = currentFocusExerciseIndex + direction;
-            if (newIndex >= 0 && newIndex < currentWorkout.exercises.length) { currentFocusExerciseIndex = newIndex; renderFocusExercise(newIndex); }
+            if (newIndex >= 0 && newIndex < currentWorkout.exercises.length) { currentFocusExerciseIndex = newIndex; renderFocusExercise(newIndex, true); }
         }
 
-        function renderFocusExercise(index) {
+        function renderFocusExercise(index, resetScroll = false) {
             const exercise = currentWorkout.exercises[index];
             if (!exercise) return;
 
@@ -8888,8 +8888,8 @@
             }
 
             const content = document.getElementById('focus-content');
+            const previousScrollTop = resetScroll ? 0 : content.scrollTop;
             content.innerHTML = '';
-            content.scrollTop = 0;
 
             // Banner progresji (informacyjny, jeśli progresja włączona)
             if (exercise.progression) {
@@ -9020,6 +9020,8 @@
             // Nawigacja (Prev/Next)
             document.getElementById('focus-nav-prev').disabled = (index === 0);
             document.getElementById('focus-nav-next').disabled = (index === currentWorkout.exercises.length - 1);
+
+            content.scrollTop = previousScrollTop;
         }
 
         function createStepper(type, label, value, exIndex, setIndex) {
