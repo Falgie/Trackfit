@@ -4905,7 +4905,7 @@
                 normalized.push({
                     id: crypto.randomUUID(),
                     date: workout?.date || workout?.started_at || workout?.start_time || new Date().toISOString(),
-                    planName: String(workout?.name || workout?.title || 'Import Strong/Hevy'),
+                    planName: String(workout?.name || workout?.title || 'Zaimportowany trening'),
                     exercises
                 });
             });
@@ -4944,7 +4944,7 @@
             for (let i = 1; i < lines.length; i++) {
                 const cols = parseCsvLine(lines[i]);
                 const date = cols[idxDate] || new Date().toISOString();
-                const workoutName = idxWorkout >= 0 ? (cols[idxWorkout] || 'Import Strong/Hevy') : 'Import Strong/Hevy';
+                const workoutName = idxWorkout >= 0 ? (cols[idxWorkout] || 'Zaimportowany trening') : 'Zaimportowany trening';
                 const exerciseName = cols[idxExercise];
                 if (!exerciseName) continue;
                 const key = `${date}::${workoutName}`;
@@ -5108,7 +5108,7 @@
                     return;
                 }
             } catch (error) {
-                console.error('Import Strong/Hevy failed:', error);
+                console.error('Import failed:', error);
                 showToast('Nie udało się zaimportować danych. Sprawdź format pliku.', 'warning', 4500);
             } finally {
                 const input = document.getElementById('strong-hevy-import-input');
@@ -5504,7 +5504,7 @@
                     { icon: 'fa-chart-line', text: 'Historia treningów oraz podsumowania miesiąca i roku.' },
                     { icon: 'fa-bolt', text: 'Szybki trening – jedno tapnięcie i zaczynasz ćwiczyć.' },
                     { icon: 'fa-palette', text: 'Jasny i ciemny motyw oraz dźwięki interfejsu.' },
-                    { icon: 'fa-file-import', text: 'Importowanie danych z plików JSON i CSV (Strong / Hevy).' }
+                    { icon: 'fa-file-import', text: 'Importowanie danych z plików JSON i CSV.' }
                 ]
             }
         };
