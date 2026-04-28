@@ -4513,10 +4513,9 @@
             if (!sheet) return;
             quickWorkoutSheetOpenedAt = Date.now();
             sheet.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sheet.classList.add('is-open');
-                document.body.classList.add('plan-sheet-open');
-            });
+            void sheet.offsetWidth;
+            sheet.classList.add('is-open');
+            document.body.classList.add('plan-sheet-open');
             if (!window._quickSheetKeydown) {
                 window._quickSheetKeydown = (e) => {
                     if (e.key === 'Escape') closeQuickWorkoutSheet({ clearEmptySession: true, resetPills: true });
@@ -4589,10 +4588,9 @@
             const titleEl = document.getElementById('plan-actions-sheet-title');
             if (titleEl) titleEl.textContent = planName && planName.trim() ? planName.trim() : 'Plan';
             sheet.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sheet.classList.add('is-open');
-                document.body.classList.add('plan-sheet-open');
-            });
+            void sheet.offsetWidth;
+            sheet.classList.add('is-open');
+            document.body.classList.add('plan-sheet-open');
             if (!window._planSheetKeydown) {
                 window._planSheetKeydown = (e) => {
                     if (e.key === 'Escape') closePlanActionsSheet();
@@ -4633,10 +4631,9 @@
             const titleEl = document.getElementById('history-actions-sheet-title');
             if (titleEl) titleEl.textContent = workoutLabel && workoutLabel.trim() ? workoutLabel.trim() : 'Trening';
             sheet.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sheet.classList.add('is-open');
-                document.body.classList.add('plan-sheet-open');
-            });
+            void sheet.offsetWidth;
+            sheet.classList.add('is-open');
+            document.body.classList.add('plan-sheet-open');
             if (!window._historyActionsSheetKeydown) {
                 window._historyActionsSheetKeydown = (e) => {
                     if (e.key === 'Escape') closeHistoryActionsSheet();
@@ -4757,10 +4754,9 @@
             syncThemeSheetToggleButton();
             syncThemeSheetUiSoundsLabel();
             sheet.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sheet.classList.add('is-open');
-                document.body.classList.add('plan-sheet-open');
-            });
+            void sheet.offsetWidth;
+            sheet.classList.add('is-open');
+            document.body.classList.add('plan-sheet-open');
             const opener = document.getElementById('theme-switcher');
             if (opener) opener.setAttribute('aria-expanded', 'true');
             if (!window._themeSheetKeydown) {
@@ -6686,10 +6682,9 @@
             }
 
             sheet.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sheet.classList.add('is-open');
-                document.body.classList.add('plan-sheet-open');
-            });
+            void sheet.offsetWidth;
+            sheet.classList.add('is-open');
+            document.body.classList.add('plan-sheet-open');
 
             renderWorkoutEditorIntoHistorySheet();
 
