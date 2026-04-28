@@ -6443,7 +6443,7 @@
                     const w = parseFloat(exercise.weights[i]);
                     const r = parseInt(exercise.repsCompleted[i]);
                     if (isNaN(w) || isNaN(r) || w <= 0 || r <= 0) continue;
-                    const ep = allTimePRs[exercise.name];
+                    const ep = findExercisePRs(allTimePRs, exercise.name);
                     if (!ep || (ep.maxWeight === null && ep.maxReps === null)) {
                         exercise.prFlags[i] = { isWeightPR: true, isRepsPR: true };
                     } else {
@@ -7093,7 +7093,7 @@
                     const w = parseFloat(exercise.weights[i]);
                     const r = parseInt(exercise.repsCompleted[i]);
                     if (isNaN(w) || isNaN(r) || w <= 0 || r <= 0) continue;
-                    const ep = allTimePRs[exercise.name];
+                    const ep = findExercisePRs(allTimePRs, exercise.name);
                     if (!ep || (ep.maxWeight === null && ep.maxReps === null)) {
                         exercise.prFlags[i] = { isWeightPR: true, isRepsPR: true };
                     } else {
@@ -8567,6 +8567,23 @@
             }
         }
 
+        function normalizeExerciseKey(name) {
+            return String(name == null ? '' : name).trim().toLowerCase();
+        }
+
+        function findExercisePRs(allTimePRs, exerciseName) {
+            if (!allTimePRs || !exerciseName) return null;
+            if (Object.prototype.hasOwnProperty.call(allTimePRs, exerciseName)) {
+                return allTimePRs[exerciseName];
+            }
+            const target = normalizeExerciseKey(exerciseName);
+            if (!target) return null;
+            for (const key in allTimePRs) {
+                if (normalizeExerciseKey(key) === target) return allTimePRs[key];
+            }
+            return null;
+        }
+
         function calculateAllTimePRs(excludedWorkoutId = null) {
             const prs = {};
             if (!Array.isArray(workoutHistory)) return prs;
@@ -8698,26 +8715,77 @@
         function saveCurrentWorkout() { saveData('currentWorkout', currentWorkout); }
 
         // Pobierz dane z ostatniego treningu dla danego ćwiczenia
-        function getLastWorkoutDataForExercise(exerciseName) {
+        function getLastWorkoutDataForExercise(exerciseName, expectedSets) {
             if (!Array.isArray(workoutHistory) || !exerciseName) return null;
-            // Przeszukuj od końca (najnowsze treningi)
+
+            const targetKey = String(exerciseName).trim().toLowerCase();
+            const isMatch = (name) => String(name || '').trim().toLowerCase() === targetKey;
+
+            // Krok 1: zbierz wszystkie wystąpienia ćwiczenia z historii (od najnowszego)
+            const occurrences = [];
+            let maxSetsSeen = 0;
             for (let i = workoutHistory.length - 1; i >= 0; i--) {
                 const workout = workoutHistory[i];
                 if (!workout || !Array.isArray(workout.exercises)) continue;
-                const exercise = workout.exercises.find(e => e && e.name === exerciseName);
-                if (exercise && Array.isArray(exercise.weights) && Array.isArray(exercise.repsCompleted)) {
-                    const setsData = [];
-                    const numSets = exercise.sets || exercise.weights.length;
-                    for (let s = 0; s < numSets; s++) {
-                        setsData.push({
-                            weight: exercise.weights[s] || '',
-                            reps: exercise.repsCompleted[s] || ''
-                        });
+                workout.exercises.forEach(ex => {
+                    if (!ex || !isMatch(ex.name)) return;
+                    if (!Array.isArray(ex.weights) || !Array.isArray(ex.repsCompleted)) return;
+                    const len = Math.max(
+                        ex.sets || 0,
+                        ex.weights.length,
+                        ex.repsCompleted.length
+                    );
+                    if (len > maxSetsSeen) maxSetsSeen = len;
+                    occurrences.push(ex);
+                });
+            }
+
+            if (occurrences.length === 0) return null;
+
+            const totalSets = Math.max(
+                Number.isFinite(expectedSets) ? expectedSets : 0,
+                maxSetsSeen
+            );
+            if (totalSets === 0) return null;
+
+            const hasValue = (v) => v !== null && v !== undefined && String(v).trim() !== '';
+
+            // Krok 2: dla każdej pozycji serii znajdź najnowszą niepustą parę
+            const setsData = new Array(totalSets).fill(null);
+            for (let s = 0; s < totalSets; s++) {
+                for (let k = 0; k < occurrences.length; k++) {
+                    const ex = occurrences[k];
+                    const w = ex.weights ? ex.weights[s] : '';
+                    const r = ex.repsCompleted ? ex.repsCompleted[s] : '';
+                    if (hasValue(w) && hasValue(r)) {
+                        setsData[s] = { weight: w, reps: r };
+                        break;
                     }
-                    return setsData;
                 }
             }
-            return null;
+
+            // Krok 3: fallback – jeżeli któraś pozycja nadal pusta, weź najnowszą niepustą parę z dowolnej pozycji
+            let fallback = null;
+            for (let k = 0; k < occurrences.length && !fallback; k++) {
+                const ex = occurrences[k];
+                if (!Array.isArray(ex.weights)) continue;
+                for (let s = 0; s < ex.weights.length; s++) {
+                    const w = ex.weights[s];
+                    const r = ex.repsCompleted ? ex.repsCompleted[s] : '';
+                    if (hasValue(w) && hasValue(r)) {
+                        fallback = { weight: w, reps: r };
+                        break;
+                    }
+                }
+            }
+
+            for (let s = 0; s < totalSets; s++) {
+                if (!setsData[s]) {
+                    setsData[s] = fallback ? { ...fallback } : { weight: '', reps: '' };
+                }
+            }
+
+            return setsData;
         }
 
         // Dodaj dodatkową serię do ćwiczenia
@@ -8837,8 +8905,8 @@
 
             const sets = exercise.sets || 3;
 
-            // Pobierz dane z poprzedniego treningu
-            const prevData = getLastWorkoutDataForExercise(exercise.name);
+            // Pobierz dane z poprzedniego treningu (z fallbackiem do ostatniej wykonanej wagi)
+            const prevData = getLastWorkoutDataForExercise(exercise.name, sets);
 
             for (let i = 0; i < sets; i++) {
                 // Główny kontener serii
@@ -9096,9 +9164,9 @@
 
             if (isNaN(weightNum) || isNaN(repsNum) || weightNum <= 0 || repsNum <= 0) return null;
 
-            // Check against all-time PRs from workoutHistory
+            // Check against all-time PRs from workoutHistory (case-insensitive name match)
             const allTimePRs = calculateAllTimePRs();
-            const exercisePRs = allTimePRs[exerciseName];
+            const exercisePRs = findExercisePRs(allTimePRs, exerciseName);
 
             // No history for this exercise — first completed set is the first PR
             if (!exercisePRs || (exercisePRs.maxWeight === null && exercisePRs.maxReps === null)) {
