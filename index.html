@@ -2585,21 +2585,41 @@
             padding: 15px;
             padding-top: calc(15px + env(safe-area-inset-top));
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
             border-bottom: 1px solid var(--border-color);
             background: var(--card-bg);
             flex-shrink: 0;
+        }
+
+        #focus-header .focus-header-title-row {
+            width: 100%;
+            min-width: 0;
         }
 
         #focus-header h3 {
             margin: 0;
             font-size: 1rem;
             text-align: left;
+            line-height: 1.35;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding-right: 10px;
+        }
+
+        #focus-header .focus-header-actions-row {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
         }
 
         #focus-header button {
@@ -2607,6 +2627,33 @@
             padding: 8px 12px;
             font-size: 0.9rem;
             margin: 0;
+        }
+
+        #focus-minimize-btn,
+        #focus-add-exercise-btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            flex: 0 0 auto;
+        }
+
+        #focus-progression-toggle {
+            flex: 0 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            #focus-header {
+                gap: 8px;
+            }
+
+            #focus-header h3 {
+                -webkit-line-clamp: 1;
+                line-clamp: 1;
+            }
         }
 
         #focus-content {
@@ -4142,20 +4189,20 @@
         <div id="workout-focus-host" aria-hidden="true">
             <div id="focus-mode">
                 <div id="focus-header">
-                    <h3 id="focus-exercise-title"></h3>
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="focus-header-title-row">
+                        <h3 id="focus-exercise-title"></h3>
+                    </div>
+                    <div class="focus-header-actions-row">
                         <button id="focus-minimize-btn" class="btn-secondary"
-                            title="Zostaw trening na później" aria-label="Minimalizuj trening"
-                            style="width: 40px; height: 40px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            title="Zostaw trening na później" aria-label="Minimalizuj trening">
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <button id="focus-progression-toggle"
                             title="Oznacz progresję na następny trening">📈</button>
-                        <button id="focus-add-exercise-btn" class="btn-info"
-                            style="width: 45px; height: 40px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        <button id="focus-add-exercise-btn" class="btn-info">
                             <i class="fas fa-plus"></i>
                         </button>
-                        <button id="focus-end-btn" class="btn-danger" style="margin: 0;">Zakończ</button>
+                        <button id="focus-end-btn" class="btn-danger">Zakończ</button>
                     </div>
                 </div>
                 <div id="focus-content"></div>
