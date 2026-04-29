@@ -2615,34 +2615,53 @@
 
         #focus-header .focus-header-actions-row {
             width: 100%;
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.8fr);
             gap: 10px;
-            align-items: center;
-            justify-content: flex-end;
-            flex-wrap: nowrap;
+            align-items: stretch;
         }
 
         #focus-header button {
-            width: auto;
+            width: 100%;
+            min-width: 0;
             padding: 8px 12px;
             font-size: 0.9rem;
             margin: 0;
+            min-height: 44px;
         }
 
         #focus-minimize-btn,
         #focus-add-exercise-btn {
-            width: 40px;
-            height: 40px;
             padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            flex: 0 0 auto;
+            height: 44px;
         }
 
-        #focus-progression-toggle {
-            flex: 0 0 auto;
+        #focus-progression-toggle,
+        #focus-end-btn {
+            height: 44px;
+        }
+
+        #focus-end-btn {
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        #focus-header .focus-header-actions-row button {
+            transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+            will-change: transform;
+        }
+
+        #focus-header .focus-header-actions-row button:active {
+            transform: scale(0.97);
+            filter: brightness(0.96);
+        }
+
+        #focus-header .focus-header-actions-row button:focus-visible {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
         }
 
         @media (min-width: 768px) {
@@ -2653,6 +2672,22 @@
             #focus-header h3 {
                 -webkit-line-clamp: 1;
                 line-clamp: 1;
+            }
+
+            #focus-header .focus-header-actions-row {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+
+            #focus-header button {
+                width: auto;
+                min-width: 0;
+            }
+
+            #focus-minimize-btn,
+            #focus-add-exercise-btn {
+                width: 40px;
             }
         }
 
