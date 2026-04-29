@@ -4750,7 +4750,7 @@
             if (!sheet) return;
             sheet.addEventListener('click', (e) => {
                 if (e.target.closest('#history-actions-sheet-backdrop')) {
-                    if (Date.now() - historyActionsSheetOpenedAt < PLAN_SHEET_BACKDROP_SUPPRESS_MS) return;
+                    if (Date.now() - historyActionsSheetOpenedAt < HISTORY_SHEET_BACKDROP_SUPPRESS_MS) return;
                     closeHistoryActionsSheet();
                     return;
                 }
@@ -5574,6 +5574,7 @@
         const TAB_SWITCH_DELAY_MS = 120;
         /** Ignoruj klik w backdrop zaraz po otwarciu (syntetyczny „ghost click” po touchend). */
         const PLAN_SHEET_BACKDROP_SUPPRESS_MS = 550;
+        const HISTORY_SHEET_BACKDROP_SUPPRESS_MS = 1100;
         /** Aktualna wersja aplikacji oraz changelog pokazywany w ekranie „Co nowego”. */
         const APP_VERSION = '1.0.0';
         const WHATS_NEW = {
