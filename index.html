@@ -8822,6 +8822,31 @@
             return currentWorkout.planName ? `${currentWorkout.planName} – ${name}` : name;
         }
 
+        function buildFocusExerciseMainLabel(exerciseName) {
+            const fallback = 'Ćwiczenie';
+            if (!exerciseName || typeof exerciseName !== 'string') return fallback;
+
+            const normalized = exerciseName.trim().replace(/\s+/g, ' ');
+            if (!normalized) return fallback;
+
+            const words = normalized.split(' ');
+            if (words.length <= 3) return normalized;
+
+            const trailingWords = new Set(['na', 'z', 'w', 'i', 'oraz', 'do', 'od', 'pod', 'nad']);
+            const selected = [];
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                const clean = word.toLowerCase().replace(/[.,;:!?()]/g, '');
+                const isTrailingConnector = trailingWords.has(clean) && selected.length >= 2;
+                if (!isTrailingConnector) {
+                    selected.push(word);
+                }
+                if (selected.length === 3) break;
+            }
+
+            return selected.join(' ').trim() || normalized;
+        }
+
         function updateWorkoutResumeBar() {
             const bar = document.getElementById('workout-resume-bar');
             if (!bar) return;
@@ -8879,7 +8904,14 @@
             if (!exercise) return;
 
             // Ustaw tytuł
-            document.getElementById('focus-exercise-title').textContent = `${index + 1}/${currentWorkout.exercises.length} - ${exercise.name}`;
+            const focusExerciseTitle = document.getElementById('focus-exercise-title');
+            if (focusExerciseTitle) {
+                const fullName = exercise.name && String(exercise.name).trim() ? String(exercise.name).trim() : 'Ćwiczenie';
+                const mainLabel = buildFocusExerciseMainLabel(fullName);
+                focusExerciseTitle.textContent = `${index + 1}/${currentWorkout.exercises.length} - ${mainLabel}`;
+                focusExerciseTitle.title = `${index + 1}/${currentWorkout.exercises.length} - ${fullName}`;
+                focusExerciseTitle.setAttribute('aria-label', `${index + 1} z ${currentWorkout.exercises.length}, ${fullName}`);
+            }
 
             // Zaktualizuj przycisk progresji w headerze
             const progToggle = document.getElementById('focus-progression-toggle');
