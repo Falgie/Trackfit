@@ -4708,6 +4708,15 @@
             closeQuickWorkoutSheet({ clearEmptySession: false, resetPills: false });
             const sheet = document.getElementById('history-actions-sheet');
             if (!sheet) return;
+            if (sheet._hideTimerId) {
+                clearTimeout(sheet._hideTimerId);
+                sheet._hideTimerId = null;
+            }
+            if (sheet._onPanelTransitionEnd) {
+                const existingPanel = sheet.querySelector('.plan-actions-sheet-panel');
+                if (existingPanel) existingPanel.removeEventListener('transitionend', sheet._onPanelTransitionEnd);
+                sheet._onPanelTransitionEnd = null;
+            }
             historyActionsSheetOpenedAt = Date.now();
             sheet.dataset.workoutId = workoutId;
             const titleEl = document.getElementById('history-actions-sheet-title');
@@ -4727,6 +4736,10 @@
         function closeHistoryActionsSheet() {
             const sheet = document.getElementById('history-actions-sheet');
             if (!sheet || sheet.classList.contains('hidden')) return;
+            if (sheet._hideTimerId) {
+                clearTimeout(sheet._hideTimerId);
+                sheet._hideTimerId = null;
+            }
             sheet.classList.remove('is-open');
             document.body.classList.remove('plan-sheet-open');
             document.removeEventListener('keydown', window._historyActionsSheetKeydown);
@@ -4736,13 +4749,16 @@
                 if (sheet.classList.contains('hidden')) return;
                 sheet.classList.add('hidden');
                 delete sheet.dataset.workoutId;
-                if (panel) panel.removeEventListener('transitionend', onTrans);
+                if (panel && sheet._onPanelTransitionEnd) panel.removeEventListener('transitionend', sheet._onPanelTransitionEnd);
+                sheet._onPanelTransitionEnd = null;
+                sheet._hideTimerId = null;
             };
             const onTrans = (e) => {
                 if (e.propertyName === 'transform' && e.target === panel) finish();
             };
+            sheet._onPanelTransitionEnd = onTrans;
             if (panel) panel.addEventListener('transitionend', onTrans);
-            setTimeout(finish, 400);
+            sheet._hideTimerId = setTimeout(finish, 400);
         }
 
         function initHistoryActionsSheet() {
